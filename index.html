@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peso y Balance Aeronáutico — BEW, DOW, ZFW, TOW y LAW</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1120;
+            color: #e2e8f0;
+        }
+        .font-mono-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+        .tab-btn.active {
+            background-color: #0284c7;
+            color: #ffffff;
+            border-color: #38bdf8;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 0.55;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        body.expanded-viewport {
+            max-width: none !important;
+        }
+        body.expanded-viewport main,
+        body.expanded-viewport header > div,
+        body.expanded-viewport nav > div {
+            max-width: 100% !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0b1120] text-slate-200 selection:bg-sky-500 selection:text-white">
+
+    <!-- ENCABEZADO PRINCIPAL CON EMBLEMA JD FLIGHT DISPATCHER -->
+    <header class="bg-[#111827] border-b border-slate-800 sticky top-0 z-30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <!-- Emblema Compás JD Flight Dispatcher - Planificación Segura -->
+                <svg id="jdCompassSvg" width="54" height="54" viewBox="0 0 120 120" class="shrink-0 drop-shadow-md" aria-label="Emblema JD Flight Dispatcher Planificación Segura">
+                    <defs>
+                        <linearGradient id="jdGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fde68a"/>
+                            <stop offset="50%" stop-color="#eab308"/>
+                            <stop offset="100%" stop-color="#a16207"/>
+                        </linearGradient>
+                        <radialGradient id="jdDiscGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#1e293b"/>
+                            <stop offset="100%" stop-color="#090d16"/>
+                        </radialGradient>
+                    </defs>
+                    <!-- Puntas de Rosa de los Vientos -->
+                    <polygon points="60,2 64,22 60,27 56,22" fill="url(#jdGoldGrad)"/>
+                    <polygon points="60,118 64,98 60,93 56,98" fill="url(#jdGoldGrad)"/>
+                    <polygon points="2,60 22,56 27,60 22,64" fill="url(#jdGoldGrad)"/>
+                    <polygon points="118,60 98,56 93,60 98,64" fill="url(#jdGoldGrad)"/>
+                    <polygon points="19,19 35,31 32,35 20,28" fill="url(#jdGoldGrad)"/>
+                    <polygon points="101,19 88,31 85,27 92,16" fill="url(#jdGoldGrad)"/>
+                    <polygon points="19,101 32,88 36,92 28,104" fill="url(#jdGoldGrad)"/>
+                    <polygon points="101,101 85,89 88,85 100,92" fill="url(#jdGoldGrad)"/>
+                    <!-- Anillo Exterior Dorado -->
+                    <circle cx="60" cy="60" r="37" fill="url(#jdDiscGrad)" stroke="url(#jdGoldGrad)" stroke-width="3"/>
+                    <circle cx="60" cy="60" r="28" fill="#090d16" stroke="url(#jdGoldGrad)" stroke-width="1.2"/>
+                    <!-- Texto Circular Superior e Inferior -->
+                    <path id="topArcPath" d="M 27,60 A 33,33 0 1,1 93,60" fill="none"/>
+                    <path id="botArcPath" d="M 25,63 A 35,35 0 0,0 95,63" fill="none"/>
+                    <text fill="#facc15" font-size="6.4" font-weight="800" letter-spacing="1.2">
+                        <textPath href="#topArcPath" startOffset="50%" text-anchor="middle">FLIGHT DISPATCHER</textPath>
+                    </text>
+                    <text fill="#fde047" font-size="5.6" font-weight="700" letter-spacing="0.8">
+                        <textPath href="#botArcPath" startOffset="50%" text-anchor="middle">PLANIFICACIÓN SEGURA</textPath>
+                    </text>
+                    <!-- Silueta Aeronave Superior y Balanza Inferior -->
+                    <path d="M 42,42 L 56,40 L 67,33 L 70,34 L 64,41 L 77,43 L 79,45 L 62,46 L 55,51 L 52,50 L 55,46 L 42,45 Z" fill="url(#jdGoldGrad)"/>
+                    <!-- Iniciales Dinámicas en Centro -->
+                    <text id="svgDispatcherInitials" x="60" y="65" text-anchor="middle" fill="url(#jdGoldGrad)" font-size="18" font-weight="900" font-family="Inter, sans-serif">JD</text>
+                    <!-- Balanza de Peso y Balance -->
+                    <line x1="52" y1="71" x2="68" y2="71" stroke="#eab308" stroke-width="1.3"/>
+                    <line x1="60" y1="68" x2="60" y2="77" stroke="#eab308" stroke-width="1.4"/>
+                    <line x1="55" y1="77" x2="65" y2="77" stroke="#eab308" stroke-width="1.4"/>
+                </svg>
+
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-white">
+                            SISTEMA DE PESO Y BALANCE AERONÁUTICO
+                        </h1>
+                        <span id="badgeDispatcherInitials" class="px-2 py-0.5 text-xs font-extrabold rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono-num">
+                            JD
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400">
+                        Flujo Completo <span class="text-sky-400 font-semibold">BEW &rarr; DOW &rarr; ZFW &rarr; TOW &rarr; LAW</span> &bull; Cualquier Aeronave &bull; Exportación Excel (.xlsx)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Controles Globales: Unidad lb/kg, Iniciales, Nueva Aeronave y Excel -->
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 text-xs">
+                    <button type="button" id="btnUnitLb" onclick="setWeightUnit('lb')" class="px-2.5 py-1 rounded-md font-bold bg-sky-600 text-white transition">
+                        LIBRAS (lb)
+                    </button>
+                    <button type="button" id="btnUnitKg" onclick="setWeightUnit('kg')" class="px-2.5 py-1 rounded-md font-bold text-slate-400 hover:text-white transition">
+                        KILOS (kg)
+                    </button>
+                </div>
+
+                <label class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs">
+                    <span class="text-slate-400 font-semibold">Iniciales:</span>
+                    <input type="text" id="dispatcherInitials" maxlength="6" value="JD" oninput="onInitialsChange()" class="w-12 bg-transparent text-amber-300 font-extrabold uppercase font-mono-num focus:outline-none">
+                </label>
+
+                <button type="button" id="btnNewAircraft" onclick="newAircraftBlank()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    <span>Nueva Aeronave</span>
+                </button>
+
+                <button type="button" id="btnResetDemo" onclick="restoreDefaultDemo()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Cargar YV645T</span>
+                </button>
+
+                <button type="button" id="btnFullscreen" onclick="toggleFullscreenMode()" title="Pantalla Completa (Tecla F)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-sky-300 border border-sky-500/40 flex items-center gap-1.5 transition">
+                    <i id="iconFullscreen" class="fa-solid fa-expand"></i>
+                    <span id="lblFullscreen">Pantalla Completa</span>
+                </button>
+
+                <button type="button" id="btnExportExcel" onclick="exportExcel3Sheets()" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Exportar Excel (.xlsx)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Barra de Navegación por Pestañas -->
+        <nav class="bg-[#0f172a] border-t border-slate-800/90">
+            <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto custom-scroll">
+                <button type="button" id="tabBtn1" onclick="setActiveTab(1)" class="tab-btn active shrink-0 px-3.5 py-2 rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-2 transition">
+                    <span class="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center text-[11px]">1</span>
+                    <span>Pesaje &amp; BEW</span>
+                </button>
+                <button type="button" id="tabBtn2" onclick="setActiveTab(2)" class="tab-btn shrink-0 px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-900 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-2 transition">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[11px]">2</span>
+                    <span>Tripulación &amp; DOW</span>
+                </button>
+                <button type="button" id="tabBtn3" onclick="setActiveTab(3)" class="tab-btn shrink-0 px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-900 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-2 transition">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[11px]">3</span>
+                    <span>Cabina (A, B, C), Bodegas &amp; Combustible</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- BANNER DE NOTIFICACIÓN / VALIDACIÓN (SIN ALERT) -->
+    <div id="statusToast" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-6 pt-3">
+        <div id="statusToastInner" class="px-4 py-2.5 rounded-xl border text-xs font-semibold flex items-center justify-between gap-2">
+            <span id="statusToastText"></span>
+            <button type="button" onclick="hideToast()" class="text-slate-300 hover:text-white px-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+        <!-- COLUMNA IZQUIERDA: PESTAÑAS INTERACTIVAS (8 COLUMNAS EN DESKTOP) -->
+        <div class="lg:col-span-8 space-y-5">
+
+            <!-- PESTAÑA 1: IDENTIFICACIÓN, LÍMITES ESTRUCTURALES, GEOMETRÍA Y PESAJE BEW -->
+            <section id="tabPanel1" class="space-y-5">
+                <!-- Identificación de Aeronave -->
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-2 border-b border-slate-800">
+                        <h2 class="text-sm font-extrabold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                            <i class="fa-solid fa-plane"></i>
+                            <span>A. Identificación de Aeronave y Pesada de Ingeniería</span>
+                        </h2>
+                        <span class="text-[11px] font-mono-num text-slate-400">Reporte Técnico de Pesaje</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Matrícula</label>
+                            <input type="text" id="acRegistration" value="YV645T" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-3 py-2 text-xs font-bold uppercase font-mono-num text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Modelo / Tipo</label>
+                            <input type="text" id="acModel" value="737-3H4" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-3 py-2 text-xs font-bold uppercase font-mono-num text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Serial (S/N)</label>
+                            <input type="text" id="acSerial" value="27932" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-3 py-2 text-xs font-bold uppercase font-mono-num text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Fecha Pesaje</label>
+                            <input type="text" id="acDate" value="13-nov-26" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-3 py-2 text-xs font-bold font-mono-num text-white focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pesos Máximos Estructurales y Geometría de Ala / Índice -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-300 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Pesos Máximos Estructurales (<span class="weight-unit-txt">lb</span>)</span>
+                        </h3>
+                        <div class="grid grid-cols-2 gap-3 text-xs font-mono-num">
+                            <div>
+                                <label class="block text-[11px] font-sans text-slate-400 mb-1">M.R.W. (Rampa)</label>
+                                <input type="number" id="limMrw" step="10" value="140000" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-1.5 text-white font-bold focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-sans text-slate-400 mb-1">M.T.O.W. (Despegue)</label>
+                                <input type="number" id="limMtow" step="10" value="139500" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-1.5 text-white font-bold focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-sans text-slate-400 mb-1">M.Z.F.W. (Cero Comb.)</label>
+                                <input type="number" id="limMzfw" step="10" value="107500" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-1.5 text-white font-bold focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-sans text-slate-400 mb-1">M.L.W. (Aterrizaje)</label>
+                                <input type="number" id="limMlw" step="10" value="115000" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-1.5 text-white font-bold focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider text-sky-400 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-ruler-combined"></i>
+                            <span>Geometría MAC, Brazo Ref. &amp; Límites CG</span>
+                        </h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-mono-num">
+                            <div>
+                                <label class="block text-[10px] font-sans text-slate-400 mb-1">MAC (in)</label>
+                                <input type="number" id="geoMac" step="0.1" value="134.5" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-2 py-1.5 text-white font-bold focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-sans text-slate-400 mb-1">LEMAC (in)</label>
+                                <input type="number" id="geoLemac" step="0.1" value="625.6" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-2 py-1.5 text-white font-bold focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-sans text-amber-300 mb-1">Brazo Ref. Ing. (in)</label>
+                                <input type="number" id="geoRefArm" step="0.1" value="648.5" oninput="recalculateAll()" class="w-full bg-slate-900 border border-amber-500/50 focus:border-amber-400 rounded-lg px-2 py-1.5 text-amber-200 font-bold focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-sans text-slate-400 mb-1">Divisor K / Const. (+)</label>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="geoIdxConst" step="100" value="65000" oninput="recalculateAll()" class="w-3/5 bg-slate-900 border border-slate-700 focus:border-sky-500 rounded px-1.5 py-1.5 text-white font-bold text-[11px] focus:outline-none">
+                                    <input type="number" id="geoIdxBase" step="1" value="40" oninput="recalculateAll()" class="w-2/5 bg-slate-900 border border-slate-700 focus:border-sky-500 rounded px-1.5 py-1.5 text-sky-300 font-bold text-[11px] focus:outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-sans text-slate-400 mb-1">CG Mín / Máx (in)</label>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="limFwdCg" step="0.1" value="631.0" oninput="recalculateAll()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-1.5 py-1.5 text-white text-[11px] focus:outline-none">
+                                    <input type="number" id="limAftCg" step="0.1" value="667.3" oninput="recalculateAll()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-1.5 py-1.5 text-white text-[11px] focus:outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-sans text-slate-400 mb-1">%MAC Mín / Máx</label>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="limMinMac" step="0.5" value="5.0" oninput="recalculateAll()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-1.5 py-1.5 text-white text-[11px] focus:outline-none">
+                                    <input type="number" id="limMaxMac" step="0.5" value="33.0" oninput="recalculateAll()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-1.5 py-1.5 text-white text-[11px] focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lecturas de Pesaje por Tren de Aterrizaje -->
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800">
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <span>B. Lecturas de Pesaje (3 Lecturas por Tren)</span>
+                        </h3>
+                        <span class="text-[11px] font-mono-num text-emerald-400">Peso Neto = Promedio (Lectura 1, 2, 3)</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs border-collapse font-mono-num">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 border-b border-slate-800 text-[10px] uppercase font-sans">
+                                    <th class="py-2 px-3 text-left">Tren / Apoyo</th>
+                                    <th class="py-2 px-2 text-right">Lectura #1</th>
+                                    <th class="py-2 px-2 text-right">Lectura #2</th>
+                                    <th class="py-2 px-2 text-right">Lectura #3</th>
+                                    <th class="py-2 px-2 text-right text-sky-300">Peso Neto</th>
+                                    <th class="py-2 px-2 text-right text-amber-300">Brazo (in)</th>
+                                    <th class="py-2 px-3 text-right text-emerald-300">Momento</th>
+                                </tr>
+                            </thead>
+                            <tbody id="weighingScaleBody" class="divide-y divide-slate-800"></tbody>
+                            <tfoot>
+                                <tr class="bg-slate-900/90 font-bold text-white border-t-2 border-slate-700">
+                                    <td class="py-2.5 px-3 font-sans uppercase text-sky-300">Total Pesaje Bruto</td>
+                                    <td id="scaleSumR1" class="py-2.5 px-2 text-right text-slate-300">0.00</td>
+                                    <td id="scaleSumR2" class="py-2.5 px-2 text-right text-slate-300">0.00</td>
+                                    <td id="scaleSumR3" class="py-2.5 px-2 text-right text-slate-300">0.00</td>
+                                    <td id="scaleTotalNet" class="py-2.5 px-2 text-right text-sky-300">0.00</td>
+                                    <td id="scaleTotalArm" class="py-2.5 px-2 text-right text-amber-300">0.00</td>
+                                    <td id="scaleTotalMom" class="py-2.5 px-3 text-right text-emerald-300">0</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ítems Agregados (Columna I - Se Restan) y Ausentes (Columna II - Se Suman) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Columna I: Se Restan del Peso Pesado -->
+                    <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+                        <div class="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800">
+                            <div>
+                                <h4 class="text-xs font-extrabold uppercase text-rose-400">Columna I — Ítems Agregados (&minus;)</h4>
+                                <p class="text-[10px] text-slate-400">Combustible utilizable / modificaciones presentes en pesada que se restan para BEW</p>
+                            </div>
+                            <button type="button" onclick="addWeighingItem('col1')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-600/20 hover:bg-rose-600/35 text-rose-300 border border-rose-500/40 transition">
+                                + Ítem
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-[11px] border-collapse font-mono-num">
+                                <thead>
+                                    <tr class="text-slate-400 border-b border-slate-800 font-sans text-[10px]">
+                                        <th class="py-1.5 px-1 text-left">Descripción</th>
+                                        <th class="py-1.5 px-1 text-right">Peso</th>
+                                        <th class="py-1.5 px-1 text-right">Brazo</th>
+                                        <th class="py-1.5 px-1 text-right">Momento</th>
+                                        <th class="py-1.5 px-1 text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="col1ItemsBody" class="divide-y divide-slate-800/80"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-mono-num font-bold">
+                            <span class="text-rose-300 font-sans">Total Col. I (&minus;):</span>
+                            <span id="col1TotalSummary" class="text-white">0.00 lb | Mom: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Columna II: Se Suman al Peso Pesado -->
+                    <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+                        <div class="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800">
+                            <div>
+                                <h4 class="text-xs font-extrabold uppercase text-emerald-400">Columna II — Ítems Ausentes (+)</h4>
+                                <p class="text-[10px] text-slate-400">Aceites / fluidos ausentes en pesada que forman parte del BEW y se suman</p>
+                            </div>
+                            <button type="button" onclick="addWeighingItem('col2')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-600/20 hover:bg-emerald-600/35 text-emerald-300 border border-emerald-500/40 transition">
+                                + Ítem
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-[11px] border-collapse font-mono-num">
+                                <thead>
+                                    <tr class="text-slate-400 border-b border-slate-800 font-sans text-[10px]">
+                                        <th class="py-1.5 px-1 text-left">Descripción</th>
+                                        <th class="py-1.5 px-1 text-right">Peso</th>
+                                        <th class="py-1.5 px-1 text-right">Brazo</th>
+                                        <th class="py-1.5 px-1 text-right">Momento</th>
+                                        <th class="py-1.5 px-1 text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="col2ItemsBody" class="divide-y divide-slate-800/80"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-xs font-mono-num font-bold">
+                            <span class="text-emerald-300 font-sans">Total Col. II (+):</span>
+                            <span id="col2TotalSummary" class="text-white">0.00 lb | Mom: 0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PESTAÑA 2: TRIPULACIÓN Y CONFIGURACIÓN DOW / DOI -->
+            <section id="tabPanel2" class="hidden space-y-5">
+                <!-- Selector de Ajustes Oficiales de Tripulación (2/0, 3/0, 2/4, 3/4, 2/3, 3/3) vs Manual -->
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800">
+                        <div>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Configuraciones Oficiales de Tripulación (Ajustes DOW / DOI)</span>
+                            </h2>
+                            <p class="text-[11px] text-slate-400">
+                                Selecciona un ajuste oficial o usa el modo manual fila por fila; el <span class="text-emerald-300 font-semibold">DOW</span>, <span class="text-sky-300 font-semibold">DOI</span> y <span class="text-amber-300 font-semibold">%MAC</span> se actualizan al instante en el perfil CG.
+                            </p>
+                        </div>
+                        <button type="button" id="btnDowModeManual" onclick="selectCrewPreset('manual')" class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-sky-600 text-white border border-sky-400 transition">
+                            Modo Manual Fila por Fila
+                        </button>
+                    </div>
+
+                    <div id="crewPresetsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
+                </div>
+
+                <!-- Tabla Manual de Tripulación, Fluidos Operativos y Equipos -->
+                <div id="dowManualPanel" class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md transition">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800">
+                        <div>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-users-gear"></i>
+                                <span>C. Desglose Manual de Tripulación, Fluidos y Equipos para DOW</span>
+                            </h2>
+                            <p class="text-[11px] text-slate-400">
+                                U.I. = [Peso (lb) &times; (Brazo &minus; Ref. Ing.)] / K &bull; DOW = BEW + Ítems Operativos
+                            </p>
+                        </div>
+                        <button type="button" onclick="addDowItem()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white transition">
+                            + Agregar Ítem DOW
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs border-collapse font-mono-num">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 border-b border-slate-800 text-[10px] uppercase font-sans">
+                                    <th class="py-2 px-2 text-center">Act.</th>
+                                    <th class="py-2 px-2 text-left">Concepto / Posición</th>
+                                    <th class="py-2 px-2 text-right">Cant.</th>
+                                    <th class="py-2 px-2 text-right">Peso Unit.</th>
+                                    <th class="py-2 px-2 text-right">Peso Total</th>
+                                    <th class="py-2 px-2 text-right text-amber-300">Brazo (in)</th>
+                                    <th class="py-2 px-2 text-right">Momento</th>
+                                    <th class="py-2 px-2 text-right text-sky-300">U.I.</th>
+                                    <th class="py-2 px-1 text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="dowItemsBody" class="divide-y divide-slate-800"></tbody>
+                            <tfoot>
+                                <tr class="bg-slate-900 font-bold text-white border-t-2 border-slate-700">
+                                    <td colspan="4" class="py-2.5 px-2 font-sans text-emerald-300">Subtotal Ítems Operativos (DOW &minus; BEW)</td>
+                                    <td id="dowItemsTotalW" class="py-2.5 px-2 text-right text-white">0.00</td>
+                                    <td class="py-2.5 px-2 text-right text-slate-500">&mdash;</td>
+                                    <td id="dowItemsTotalMom" class="py-2.5 px-2 text-right text-slate-200">0</td>
+                                    <td id="dowItemsTotalUi" class="py-2.5 px-2 text-right text-sky-300">0.00</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PESTAÑA 3: CABINA (SECCIONES A, B, C), BODEGAS (1–4) Y COMBUSTIBLE -->
+            <section id="tabPanel3" class="hidden space-y-5">
+                <!-- Cabina de Pasajeros: 3 Secciones Manuales (A inicia con 12 PAX) con Brazo Editable y Fórmula U.I. -->
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-2 border-b border-slate-800">
+                        <div>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wider text-amber-300 flex items-center gap-2">
+                                <i class="fa-solid fa-chair"></i>
+                                <span>D. Cabina de Pasajeros — Secciones Manuales A, B y C</span>
+                            </h2>
+                            <p class="text-[11px] text-slate-400">
+                                Sección A (Filas 1–3) inicia con <span class="text-white font-bold">12 PAX</span> &bull; Edita pasajeros y brazos manualmente; cada sección muestra su fórmula y valor de <span class="text-sky-300 font-bold">U.I.</span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-mono-num">
+                            <label class="text-slate-400 font-sans text-[11px]">Peso/PAX:</label>
+                            <input type="number" id="paxAvgWeight" step="1" value="165" oninput="recalculateAll()" class="w-20 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white font-bold text-right focus:outline-none">
+                            <span class="text-slate-400 text-[11px] weight-unit-txt">lb</span>
+                            <button type="button" onclick="resetCabinSections()" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 transition">
+                                Reset 12/47/72
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="cabinSectionsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-num">
+                        <span class="text-slate-300 font-sans font-semibold">
+                            Total Pasajeros: <strong id="cabinTotalPax" class="text-amber-300">131</strong> PAX
+                        </span>
+                        <span class="text-slate-300">
+                            Peso Cabina: <strong id="cabinTotalWeight" class="text-white">0.00</strong> <span class="weight-unit-txt">lb</span>
+                        </span>
+                        <span class="text-slate-300">
+                            Momento Cabina: <strong id="cabinTotalMom" class="text-slate-200">0</strong>
+                        </span>
+                        <span class="text-sky-300 font-bold">
+                            U.I. Cabina: <strong id="cabinTotalUi">0.00</strong>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Compartimientos de Carga 1, 2, 3 y 4 (Edición Manual + Límites Individuales y Combinados) -->
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800">
+                        <div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                                <span>E. Compartimientos de Carga (Delanteros 1–2 y Traseros 3–4)</span>
+                            </h3>
+                            <p class="text-[11px] text-slate-400">Edición manual de carga y centroides con control de máximos individuales y combinados</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] font-mono-num">
+                            <span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-300">
+                                Máx. Comb. Del. (1+2):
+                                <input type="number" id="limCombFwd" step="1" value="5002" oninput="recalculateAll()" class="w-16 bg-transparent text-amber-300 font-bold text-right focus:outline-none">
+                                <span class="weight-unit-txt">lb</span>
+                            </span>
+                            <span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-300">
+                                Máx. Comb. Tras. (3+4):
+                                <input type="number" id="limCombAft" step="1" value="7648" oninput="recalculateAll()" class="w-16 bg-transparent text-amber-300 font-bold text-right focus:outline-none">
+                                <span class="weight-unit-txt">lb</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs border-collapse font-mono-num">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 border-b border-slate-800 text-[10px] uppercase font-sans">
+                                    <th class="py-2 px-2 text-left">Comp.</th>
+                                    <th class="py-2 px-2 text-left">Ubicación (STA)</th>
+                                    <th class="py-2 px-2 text-right">Peso Carga</th>
+                                    <th class="py-2 px-2 text-right text-amber-300">Centroide (in)</th>
+                                    <th class="py-2 px-2 text-right">Máx. Comp.</th>
+                                    <th class="py-2 px-2 text-right">Momento</th>
+                                    <th class="py-2 px-2 text-right text-sky-300">U.I.</th>
+                                    <th class="py-2 px-2 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cargoCompBody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="cargoCombinedStatusRow" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono-num">
+                        <div id="cargoFwdCombBox" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900/70 flex items-center justify-between">
+                            <span class="font-sans text-[11px] font-semibold">Combinado Delantero (1 + 2):</span>
+                            <span id="cargoFwdCombText" class="font-bold">0.00 / 5,002 lb</span>
+                        </div>
+                        <div id="cargoAftCombBox" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900/70 flex items-center justify-between">
+                            <span class="font-sans text-[11px] font-semibold">Combinado Trasero (3 + 4):</span>
+                            <span id="cargoAftCombText" class="font-bold">0.00 / 7,648 lb</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combustible de Despegue (TO Fuel) y Consumo en Vuelo (Burn-off) -->
+                <div class="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-400 mb-3 pb-2 border-b border-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-gas-pump"></i>
+                        <span>F. Combustible de Despegue (TOW) y Consumo de Vuelo (LAW)</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono-num">
+                        <div>
+                            <label class="block text-[10px] font-sans text-slate-400 mb-1">Fuel Takeoff (<span class="weight-unit-txt">lb</span>)</label>
+                            <input type="number" id="fuelTakeoffW" step="50" value="12000" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-sky-500 rounded-lg px-2.5 py-1.5 text-white font-bold focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-sans text-amber-300 mb-1">Brazo Fuel TO (in)</label>
+                            <input type="number" id="fuelTakeoffArm" step="0.5" value="628.4" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-1.5 text-amber-200 font-bold focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-sans text-slate-400 mb-1">Burn-Off / Trip Fuel (<span class="weight-unit-txt">lb</span>)</label>
+                            <input type="number" id="fuelBurnW" step="50" value="4500" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-400 rounded-lg px-2.5 py-1.5 text-white font-bold focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-sans text-emerald-300 mb-1">Brazo Burn-Off (in)</label>
+                            <input type="number" id="fuelBurnArm" step="0.5" value="628.4" oninput="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 focus:border-emerald-400 rounded-lg px-2.5 py-1.5 text-emerald-200 font-bold focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- COLUMNA DERECHA: RESUMEN OPERACIONAL, BRAZO CONSOLIDADO Y DIAGRAMA SVG (4 COLUMNAS) -->
+        <aside class="lg:col-span-4 space-y-5 lg:sticky lg:top-24">
+
+            <!-- Tabla de Resumen Operacional (BEW -> DOW -> ZFW -> TOW -> LAW) -->
+            <section class="bg-[#111827] border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-2">
+                    <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-[#22c55e]"></i>
+                        <span>Resumen Operacional</span>
+                    </h2>
+                    <span class="text-[10px] font-mono-num text-slate-400">
+                        MAC <span id="lblSummaryMac">134.5</span>" &bull; LEMAC <span id="lblSummaryLemac">625.6</span>"
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs border-collapse font-mono-num">
+                        <thead>
+                            <tr class="bg-slate-900/70 border-b border-slate-800 text-slate-400 text-[10px] uppercase font-sans">
+                                <th class="py-2 px-2.5 text-left font-bold">Etapa</th>
+                                <th class="py-2 px-1.5 text-right">Peso (<span class="weight-unit-txt">lb</span>)</th>
+                                <th class="py-2 px-1.5 text-right">CG (in)</th>
+                                <th class="py-2 px-1.5 text-right">Momento</th>
+                                <th class="py-2 px-1.5 text-right">% MAC</th>
+                                <th class="py-2 px-2.5 text-right text-[#38bdf8]">Índice</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <tr>
+                                <td class="py-2 px-2.5 font-sans font-semibold text-slate-200">BEW</td>
+                                <td id="tblBewW" class="py-2 px-1.5 text-right text-white">0.00</td>
+                                <td id="tblBewArm" class="py-2 px-1.5 text-right text-slate-300">0.00</td>
+                                <td id="tblBewMom" class="py-2 px-1.5 text-right text-slate-300">0</td>
+                                <td id="tblBewMac" class="py-2 px-1.5 text-right text-[#38bdf8]">0.00%</td>
+                                <td id="tblBewIbo" class="py-2 px-2.5 text-right font-bold text-[#38bdf8]">0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-2.5 font-sans font-semibold text-emerald-300">DOW</td>
+                                <td id="tblDowW" class="py-2 px-1.5 text-right text-white">0.00</td>
+                                <td id="tblDowArm" class="py-2 px-1.5 text-right text-slate-300">0.00</td>
+                                <td id="tblDowMom" class="py-2 px-1.5 text-right text-slate-300">0</td>
+                                <td id="tblDowMac" class="py-2 px-1.5 text-right text-emerald-300">0.00%</td>
+                                <td id="tblDowDoi" class="py-2 px-2.5 text-right font-bold text-[#22c55e]">0.00</td>
+                            </tr>
+                            <tr class="bg-amber-500/10 font-bold text-white">
+                                <td class="py-2 px-2.5 font-sans uppercase text-amber-300">ZFW</td>
+                                <td id="tblZfwW" class="py-2 px-1.5 text-right text-amber-300">0.00</td>
+                                <td id="tblZfwArm" class="py-2 px-1.5 text-right text-white">0.00</td>
+                                <td id="tblZfwMom" class="py-2 px-1.5 text-right text-slate-300">0</td>
+                                <td id="tblZfwMac" class="py-2 px-1.5 text-right text-amber-300">0.00%</td>
+                                <td id="tblZfwZfi" class="py-2 px-2.5 text-right text-amber-300">0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-2.5 font-sans font-semibold text-sky-300">TOW</td>
+                                <td id="tblTowW" class="py-2 px-1.5 text-right text-[#38bdf8]">0.00</td>
+                                <td id="tblTowArm" class="py-2 px-1.5 text-right text-white">0.00</td>
+                                <td id="tblTowMom" class="py-2 px-1.5 text-right text-slate-300">0</td>
+                                <td id="tblTowMac" class="py-2 px-1.5 text-right text-[#38bdf8]">0.00%</td>
+                                <td id="tblTowToi" class="py-2 px-2.5 text-right text-[#38bdf8]">0.00</td>
+                            </tr>
+                            <tr class="bg-emerald-500/10 font-bold text-white">
+                                <td class="py-2 px-2.5 font-sans uppercase text-[#22c55e]">LAW</td>
+                                <td id="tblLawW" class="py-2 px-1.5 text-right text-[#22c55e]">0.00</td>
+                                <td id="tblLawArm" class="py-2 px-1.5 text-right text-white">0.00</td>
+                                <td id="tblLawMom" class="py-2 px-1.5 text-right text-slate-300">0</td>
+                                <td id="tblLawMac" class="py-2 px-1.5 text-right text-[#22c55e]">0.00%</td>
+                                <td id="tblLawLoi" class="py-2 px-2.5 text-right text-[#22c55e]">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bloque Consolidado: Momento Total / Peso Total = Brazo + Comparación Brazo Ingeniería + Aviso de Límites -->
+                <div id="summaryConsolidatedBanner" class="m-3 p-3.5 rounded-xl border border-emerald-500/50 bg-emerald-950/25 space-y-2.5 transition">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span id="summaryLimitDot" class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+                            <span id="summaryLimitTitle" class="text-xs font-extrabold uppercase tracking-wider text-[#22c55e]">
+                                DENTRO DE LOS LÍMITES
+                            </span>
+                        </div>
+                        <span id="summaryLimitDetail" class="text-[10px] font-mono-num font-bold text-slate-200">
+                            CG: 631.0–667.3 in &bull; %MAC: 5.0–33.0%
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-2 text-xs font-mono-num">
+                        <div class="bg-[#0b1120]/90 border border-slate-800 rounded-lg p-2.5">
+                            <span class="text-[10px] font-sans uppercase text-slate-400 block">Brazo Consolidado (Momento Total / Peso Total)</span>
+                            <div class="text-sm font-extrabold text-white mt-0.5" id="summaryTotalArmCalc">0.00 in (0.00% MAC)</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5 truncate" id="summaryTotalArmFormula">0 / 0.00 lb = 0.00 in</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-[#0b1120]/90 border border-slate-800 rounded-lg p-2.5">
+                                <span class="text-[10px] font-sans uppercase text-amber-300 block">Brazo Ingeniería (Ref.)</span>
+                                <div class="text-xs font-extrabold text-amber-300 mt-0.5" id="summaryEngArmValue">648.50 in</div>
+                                <div class="text-[10px] font-bold mt-0.5" id="summaryEngArmDiff">Dif.: +0.00 in</div>
+                            </div>
+
+                            <div class="bg-[#0b1120]/90 border border-slate-800 rounded-lg p-2.5">
+                                <span class="text-[10px] font-sans uppercase text-[#38bdf8] block">Brazo ZFW (Mom / Peso)</span>
+                                <div class="text-xs font-extrabold text-[#38bdf8] mt-0.5" id="summaryZfwArmFormula">0.00 in</div>
+                                <div class="text-[10px] text-slate-300 mt-0.5" id="summaryZfwEngDiff">vs Ing.: +0.00 in</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gráfica SVG de Centro de Gravedad y Envolvente -->
+            <section class="bg-[#111827] border border-slate-800 rounded-2xl p-4 shadow-md">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Perfil de CG (%MAC) por Etapa</span>
+                    </h3>
+                    <span class="text-[10px] font-mono-num text-slate-400">BEW &rarr; DOW &rarr; ZFW &rarr; TOW &rarr; LAW</span>
+                </div>
+
+                <svg id="cgEnvelopeSvg" viewBox="0 0 360 175" class="w-full h-auto bg-[#0b1120] rounded-xl border border-slate-800" aria-label="Gráfica de %MAC por etapa">
+                    <!-- Banda Verde Segura (5% a 33% escalada en X de 40 a 330) -->
+                    <rect x="65" y="18" width="215" height="122" fill="rgba(34, 197, 94, 0.12)" stroke="rgba(34, 197, 94, 0.45)" stroke-dasharray="4 3"/>
+                    <line x1="65" y1="18" x2="65" y2="145" stroke="#22c55e" stroke-width="1.5"/>
+                    <line x1="280" y1="18" x2="280" y2="145" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="65" y="158" text-anchor="middle" fill="#4ade80" font-size="9" font-family="JetBrains Mono, monospace">5%</text>
+                    <text x="172" y="158" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="JetBrains Mono, monospace">19%</text>
+                    <text x="280" y="158" text-anchor="middle" fill="#4ade80" font-size="9" font-family="JetBrains Mono, monospace">33%</text>
+
+                    <!-- Guías Horizontales por Etapa -->
+                    <line x1="35" y1="36" x2="335" y2="36" stroke="#1e293b" stroke-width="1"/>
+                    <line x1="35" y1="60" x2="335" y2="60" stroke="#1e293b" stroke-width="1"/>
+                    <line x1="35" y1="84" x2="335" y2="84" stroke="#1e293b" stroke-width="1"/>
+                    <line x1="35" y1="108" x2="335" y2="108" stroke="#1e293b" stroke-width="1"/>
+                    <line x1="35" y1="132" x2="335" y2="132" stroke="#1e293b" stroke-width="1"/>
+
+                    <text x="8" y="39" fill="#94a3b8" font-size="8.5" font-family="Inter, sans-serif">BEW</text>
+                    <text x="8" y="63" fill="#6ee7b7" font-size="8.5" font-family="Inter, sans-serif">DOW</text>
+                    <text x="8" y="87" fill="#fcd34d" font-size="8.5" font-family="Inter, sans-serif">ZFW</text>
+                    <text x="8" y="111" fill="#7dd3fc" font-size="8.5" font-family="Inter, sans-serif">TOW</text>
+                    <text x="8" y="135" fill="#4ade80" font-size="8.5" font-family="Inter, sans-serif">LAW</text>
+
+                    <!-- Línea Conectora Dinámica -->
+                    <polyline id="svgCgPolyline" points="" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"/>
+
+                    <!-- Puntos por Etapa -->
+                    <circle id="ptBew" cx="172" cy="36" r="4.5" fill="#38bdf8"/>
+                    <circle id="ptDow" cx="172" cy="60" r="4.5" fill="#22c55e"/>
+                    <circle id="ptZfw" cx="172" cy="84" r="5" fill="#f59e0b"/>
+                    <circle id="ptTow" cx="172" cy="108" r="4.5" fill="#38bdf8"/>
+                    <circle id="ptLaw" cx="172" cy="132" r="4.5" fill="#22c55e"/>
+                </svg>
+            </section>
+        </aside>
+    </main>
+
+    <footer class="bg-[#111827] border-t border-slate-800 py-3 px-4 text-center text-[11px] text-slate-400">
+        Despacho Operacional <span id="footerInitials" class="text-amber-300 font-bold">JD</span> &bull; Planificación Segura &bull; Cálculo Aeronáutico de Peso y Balance
+    </footer>
+
+    <script>
+        const LB_PER_KG = 2.20462262185;
+        let currentUnit = 'lb'; // 'lb' o 'kg'
+        let toastTimer = null;
+
+        // 6 Ajustes Oficiales de Tripulación (Sub-Total en lb, I.U. respecto al c.a., OEW/DOW ref, DOI ref, %MAC ref)
+        const CREW_PRESETS = [
+            { id: '2_0', code: 'f) AJUSTE 2/0', desc: '2 Pilotos / 0 Trip. Cabina', subTotalLb: 650, iuExact: 0.28, iuRound: 0.3, oewRefLb: 72684, doiRef: 40.3, macRef: 17.03 },
+            { id: '3_0', code: 'g) AJUSTE 3/0', desc: '3 Pilotos / 0 Trip. Cabina', subTotalLb: 850, iuExact: -1.14, iuRound: -1.1, oewRefLb: 72884, doiRef: 38.9, macRef: 17.01 },
+            { id: '2_4', code: 'f) AJUSTE 2/4', desc: '2 Pilotos / 4 Trip. Cabina', subTotalLb: 1384, iuExact: 1.51, iuRound: 1.5, oewRefLb: 73418, doiRef: 41.5, macRef: 17.04 },
+            { id: '3_4', code: 'g) AJUSTE 3/4', desc: '3 Pilotos / 4 Trip. Cabina', subTotalLb: 1584, iuExact: 0.08, iuRound: 0.0, oewRefLb: 73618, doiRef: 40.1, macRef: 17.03 },
+            { id: '2_3', code: 'h) AJUSTE 2/3', desc: '2 Pilotos / 3 Trip. Cabina', subTotalLb: 1219, iuExact: 2.73, iuRound: 3.0, oewRefLb: 73253, doiRef: 42.7, macRef: 17.05 },
+            { id: '3_3', code: 'h) AJUSTE 3/3', desc: '3 Pilotos / 3 Trip. Cabina', subTotalLb: 1419, iuExact: -0.61, iuRound: -1.0, oewRefLb: 73453, doiRef: 39.4, macRef: 17.02 }
+        ];
+
+        // Estado reactivo centralizado (valores internos en unidad activa de pantalla para edición directa)
+        let state = {
+            crewPresetId: 'manual',
+            scales: [
+                { id: 'NLG', name: 'Tren de Nariz (NLG)', r1: 8470, r2: 8460, r3: 8480, arm: 207.51 },
+                { id: 'MLG_LH', name: 'Tren Principal Izq. (MLG/LH)', r1: 36238, r2: 36238, r3: 36210, arm: 698.06 },
+                { id: 'MLG_RH', name: 'Tren Principal Der. (MLG/RH)', r1: 36509, r2: 36630, r3: 36570, arm: 698.07 }
+            ],
+            col1Items: [
+                { desc: 'Tec On Board', weightLb: 114.0, arm: 227.0 },
+                { desc: 'Toilet Fluid Fwd', weightLb: 0.0, arm: 277.0 },
+                { desc: 'Toilet Fluid Aft', weightLb: 0.0, arm: 948.0 },
+                { desc: 'Water', weightLb: 0.0, arm: 1058.0 },
+                { desc: 'Main Tank 1 (Usable)', weightLb: 4360.0, arm: 628.4 },
+                { desc: 'Main Tank 2 (Usable)', weightLb: 4330.0, arm: 628.4 },
+                { desc: 'Central Tank (Usable)', weightLb: 160.0, arm: 628.4 },
+                { desc: 'Instalación Primera Clase', weightLb: 386.5, arm: 402.95 },
+                { desc: 'Instalación ADS-B', weightLb: 10.0, arm: 320.0 }
+            ],
+            col2Items: [
+                { desc: 'APU Oil', weightLb: 20.9, arm: 1221.0 },
+                { desc: 'Engine Oil Usable', weightLb: 66.8, arm: 529.0 },
+                { desc: 'Engine Oil Unusable', weightLb: 21.8, arm: 535.0 },
+                { desc: 'Engine Oil Unusable Trapped', weightLb: 16.8, arm: 559.0 }
+            ],
+            dowItems: [
+                { active: true, name: 'Capitán', qty: 1, unitLb: 190.0, arm: 150.0 },
+                { active: true, name: 'Primer Oficial', qty: 1, unitLb: 190.0, arm: 150.0 },
+                { active: false, name: 'Primer Observador', qty: 1, unitLb: 175.0, arm: 185.0 },
+                { active: false, name: 'Segundo Observador', qty: 1, unitLb: 175.0, arm: 178.0 },
+                { active: true, name: 'Tripulante Cabina Delantero', qty: 1, unitLb: 165.0, arm: 237.0 },
+                { active: true, name: 'Tripulantes Cabina Traseros', qty: 2, unitLb: 165.0, arm: 1083.0 },
+                { active: true, name: 'Equipaje Tripulación de Mando', qty: 1, unitLb: 50.0, arm: 150.0 },
+                { active: true, name: 'Agua Potable (Potable Water)', qty: 1, unitLb: 200.0, arm: 1058.0 },
+                { active: true, name: 'Líquido Baño Delantero', qty: 1, unitLb: 80.0, arm: 277.0 },
+                { active: true, name: 'Líquido Baño Trasero', qty: 1, unitLb: 100.0, arm: 948.0 }
+            ],
+            cabinSections: [
+                { id: 'A', label: 'Sección A (Filas 1–3)', pax: 12, arm: 332.0 },
+                { id: 'B', label: 'Sección B (Filas 4–12)', pax: 47, arm: 546.5 },
+                { id: 'C', label: 'Sección C (Filas 13–23)', pax: 72, arm: 839.2 }
+            ],
+            cargoComps: [
+                { id: 1, name: 'Comp. 1 (Delantero)', sta: 'STA 300 a 415', weightLb: 0, arm: 346.1, maxLb: 2537 },
+                { id: 2, name: 'Comp. 2 (Delantero)', sta: 'STA 415 a 500', weightLb: 0, arm: 457.4, maxLb: 2465 },
+                { id: 3, name: 'Comp. 3 (Trasero)', sta: 'STA 731 a 892', weightLb: 0, arm: 811.5, maxLb: 5152 },
+                { id: 4, name: 'Comp. 4 (Trasero)', sta: 'STA 892 a 1048', weightLb: 0, arm: 968.5, maxLb: 2496 }
+            ]
+        };
+
+        let lastCalc = null;
+
+        // Helpers de conversión y formato
+        function lbToDisplay(lbVal) {
+            const num = Number(lbVal) || 0;
+            return currentUnit === 'lb' ? num : num / LB_PER_KG;
+        }
+
+        function displayToLb(dispVal) {
+            const num = Number(dispVal) || 0;
+            return currentUnit === 'lb' ? num : num * LB_PER_KG;
+        }
+
+        function fmt(num, decimals = 2) {
+            const safe = Number.isFinite(num) ? num : 0;
+            return safe.toLocaleString('en-US', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+        }
+
+        function setText(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        }
+
+        function showToast(msg, type = 'info') {
+            const wrap = document.getElementById('statusToast');
+            const inner = document.getElementById('statusToastInner');
+            const text = document.getElementById('statusToastText');
+            if (!wrap || !inner || !text) return;
+
+            text.textContent = msg;
+            if (type === 'error') {
+                inner.className = 'px-4 py-2.5 rounded-xl border border-rose-500/60 bg-rose-950/70 text-rose-200 text-xs font-semibold flex items-center justify-between gap-2';
+            } else if (type === 'success') {
+                inner.className = 'px-4 py-2.5 rounded-xl border border-emerald-500/60 bg-emerald-950/70 text-emerald-200 text-xs font-semibold flex items-center justify-between gap-2';
+            } else {
+                inner.className = 'px-4 py-2.5 rounded-xl border border-sky-500/60 bg-sky-950/70 text-sky-200 text-xs font-semibold flex items-center justify-between gap-2';
+            }
+            wrap.classList.remove('hidden');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => hideToast(), 4500);
+        }
+
+        function hideToast() {
+            const wrap = document.getElementById('statusToast');
+            if (wrap) wrap.classList.add('hidden');
+        }
+
+        // Iniciales del despachador
+        function onInitialsChange() {
+            const inp = document.getElementById('dispatcherInitials');
+            const raw = (inp && inp.value ? inp.value.trim().toUpperCase() : '') || 'JD';
+            setText('badgeDispatcherInitials', raw);
+            setText('footerInitials', raw);
+            const svgTxt = document.getElementById('svgDispatcherInitials');
+            if (svgTxt) {
+                svgTxt.textContent = raw;
+                svgTxt.setAttribute('font-size', raw.length <= 2 ? '18' : raw.length <= 4 ? '13' : '10');
+            }
+        }
+
+        // Cambio de pestañas
+        function setActiveTab(tabIndex) {
+            [1, 2, 3].forEach(idx => {
+                const btn = document.getElementById(`tabBtn${idx}`);
+                const panel = document.getElementById(`tabPanel${idx}`);
+                if (btn) {
+                    if (idx === tabIndex) {
+                        btn.classList.add('active');
+                        btn.classList.remove('bg-slate-900', 'text-slate-300');
+                    } else {
+                        btn.classList.remove('active');
+                        btn.classList.add('bg-slate-900', 'text-slate-300');
+                    }
+                }
+                if (panel) {
+                    if (idx === tabIndex) panel.classList.remove('hidden');
+                    else panel.classList.add('hidden');
+                }
+            });
+        }
+
+        // Cambio de unidad lb / kg con conversión de inputs existentes
+        function setWeightUnit(newUnit) {
+            if (newUnit === currentUnit) return;
+
+            const factor = newUnit === 'kg' ? (1 / LB_PER_KG) : LB_PER_KG;
+            const weightInputIds = ['limMrw', 'limMtow', 'limMzfw', 'limMlw', 'paxAvgWeight', 'limCombFwd', 'limCombAft', 'fuelTakeoffW', 'fuelBurnW'];
+
+            weightInputIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const currentVal = Number(el.value) || 0;
+                    el.value = (currentVal * factor).toFixed(newUnit === 'kg' ? 1 : 0);
+                }
+            });
+
+            state.scales.forEach(sc => {
+                sc.r1 = Number((sc.r1 * factor).toFixed(2));
+                sc.r2 = Number((sc.r2 * factor).toFixed(2));
+                sc.r3 = Number((sc.r3 * factor).toFixed(2));
+            });
+
+            state.col1Items.forEach(it => { it.weightLb = Number((it.weightLb * factor).toFixed(2)); });
+            state.col2Items.forEach(it => { it.weightLb = Number((it.weightLb * factor).toFixed(2)); });
+            state.dowItems.forEach(it => { it.unitLb = Number((it.unitLb * factor).toFixed(2)); });
+            state.cargoComps.forEach(c => {
+                c.weightLb = Number((c.weightLb * factor).toFixed(2));
+                c.maxLb = Number((c.maxLb * factor).toFixed(1));
+            });
+
+            currentUnit = newUnit;
+
+            const btnLb = document.getElementById('btnUnitLb');
+            const btnKg = document.getElementById('btnUnitKg');
+            if (btnLb && btnKg) {
+                if (newUnit === 'lb') {
+                    btnLb.className = 'px-2.5 py-1 rounded-md font-bold bg-sky-600 text-white transition';
+                    btnKg.className = 'px-2.5 py-1 rounded-md font-bold text-slate-400 hover:text-white transition';
+                } else {
+                    btnKg.className = 'px-2.5 py-1 rounded-md font-bold bg-sky-600 text-white transition';
+                    btnLb.className = 'px-2.5 py-1 rounded-md font-bold text-slate-400 hover:text-white transition';
+                }
+            }
+
+            document.querySelectorAll('.weight-unit-txt').forEach(span => {
+                span.textContent = currentUnit;
+            });
+
+            renderAllDynamicSections();
+            recalculateAll();
+        }
+
+        // Nueva Aeronave en Blanco para ingresar cualquier pesada
+        function newAircraftBlank() {
+            const reg = document.getElementById('acRegistration');
+            const mod = document.getElementById('acModel');
+            const ser = document.getElementById('acSerial');
+            const dt = document.getElementById('acDate');
+            if (reg) reg.value = '';
+            if (mod) mod.value = '';
+            if (ser) ser.value = '';
+            if (dt) dt.value = '';
+
+            state.crewPresetId = 'manual';
+            state.scales.forEach(sc => { sc.r1 = 0; sc.r2 = 0; sc.r3 = 0; });
+            state.col1Items = [];
+            state.col2Items = [];
+            state.dowItems.forEach(d => { d.qty = 0; d.unitLb = 0; });
+            state.cabinSections.forEach(s => { s.pax = 0; });
+            state.cargoComps.forEach(c => { c.weightLb = 0; });
+
+            const fTo = document.getElementById('fuelTakeoffW');
+            const fBurn = document.getElementById('fuelBurnW');
+            if (fTo) fTo.value = '0';
+            if (fBurn) fBurn.value = '0';
+
+            renderAllDynamicSections();
+            recalculateAll();
+            setActiveTab(1);
+            showToast('Formulario limpiado para ingresar nueva aeronave y pesada.', 'info');
+        }
+
+        // Restaurar configuración base YV645T / 737-3H4
+        function restoreDefaultDemo() {
+            currentUnit = 'lb';
+            const btnLb = document.getElementById('btnUnitLb');
+            const btnKg = document.getElementById('btnUnitKg');
+            if (btnLb && btnKg) {
+                btnLb.className = 'px-2.5 py-1 rounded-md font-bold bg-sky-600 text-white transition';
+                btnKg.className = 'px-2.5 py-1 rounded-md font-bold text-slate-400 hover:text-white transition';
+            }
+            document.querySelectorAll('.weight-unit-txt').forEach(span => { span.textContent = 'lb'; });
+
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+            setVal('acRegistration', 'YV645T');
+            setVal('acModel', '737-3H4');
+            setVal('acSerial', '27932');
+            setVal('acDate', '13-nov-26');
+            setVal('limMrw', '140000');
+            setVal('limMtow', '139500');
+            setVal('limMzfw', '107500');
+            setVal('limMlw', '115000');
+            setVal('geoMac', '134.5');
+            setVal('geoLemac', '625.6');
+            setVal('geoRefArm', '648.5');
+            setVal('geoIdxConst', '65000');
+            setVal('geoIdxBase', '40');
+            setVal('limFwdCg', '631.0');
+            setVal('limAftCg', '667.3');
+            setVal('limMinMac', '5.0');
+            setVal('limMaxMac', '33.0');
+            setVal('paxAvgWeight', '165');
+            setVal('limCombFwd', '5002');
+            setVal('limCombAft', '7648');
+            setVal('fuelTakeoffW', '12000');
+            setVal('fuelTakeoffArm', '628.4');
+            setVal('fuelBurnW', '4500');
+            setVal('fuelBurnArm', '628.4');
+
+            state = {
+                crewPresetId: 'manual',
+                scales: [
+                    { id: 'NLG', name: 'Tren de Nariz (NLG)', r1: 8470, r2: 8460, r3: 8480, arm: 207.51 },
+                    { id: 'MLG_LH', name: 'Tren Principal Izq. (MLG/LH)', r1: 36238, r2: 36238, r3: 36210, arm: 698.06 },
+                    { id: 'MLG_RH', name: 'Tren Principal Der. (MLG/RH)', r1: 36509, r2: 36630, r3: 36570, arm: 698.07 }
+                ],
+                col1Items: [
+                    { desc: 'Tec On Board', weightLb: 114.0, arm: 227.0 },
+                    { desc: 'Toilet Fluid Fwd', weightLb: 0.0, arm: 277.0 },
+                    { desc: 'Toilet Fluid Aft', weightLb: 0.0, arm: 948.0 },
+                    { desc: 'Water', weightLb: 0.0, arm: 1058.0 },
+                    { desc: 'Main Tank 1 (Usable)', weightLb: 4360.0, arm: 628.4 },
+                    { desc: 'Main Tank 2 (Usable)', weightLb: 4330.0, arm: 628.4 },
+                    { desc: 'Central Tank (Usable)', weightLb: 160.0, arm: 628.4 },
+                    { desc: 'Instalación Primera Clase', weightLb: 386.5, arm: 402.95 },
+                    { desc: 'Instalación ADS-B', weightLb: 10.0, arm: 320.0 }
+                ],
+                col2Items: [
+                    { desc: 'APU Oil', weightLb: 20.9, arm: 1221.0 },
+                    { desc: 'Engine Oil Usable', weightLb: 66.8, arm: 529.0 },
+                    { desc: 'Engine Oil Unusable', weightLb: 21.8, arm: 535.0 },
+                    { desc: 'Engine Oil Unusable Trapped', weightLb: 16.8, arm: 559.0 }
+                ],
+                dowItems: [
+                    { active: true, name: 'Capitán', qty: 1, unitLb: 190.0, arm: 150.0 },
+                    { active: true, name: 'Primer Oficial', qty: 1, unitLb: 190.0, arm: 150.0 },
+                    { active: false, name: 'Primer Observador', qty: 1, unitLb: 175.0, arm: 185.0 },
+                    { active: false, name: 'Segundo Observador', qty: 1, unitLb: 175.0, arm: 178.0 },
+                    { active: true, name: 'Tripulante Cabina Delantero', qty: 1, unitLb: 165.0, arm: 237.0 },
+                    { active: true, name: 'Tripulantes Cabina Traseros', qty: 2, unitLb: 165.0, arm: 1083.0 },
+                    { active: true, name: 'Equipaje Tripulación de Mando', qty: 1, unitLb: 50.0, arm: 150.0 },
+                    { active: true, name: 'Agua Potable (Potable Water)', qty: 1, unitLb: 200.0, arm: 1058.0 },
+                    { active: true, name: 'Líquido Baño Delantero', qty: 1, unitLb: 80.0, arm: 277.0 },
+                    { active: true, name: 'Líquido Baño Trasero', qty: 1, unitLb: 100.0, arm: 948.0 }
+                ],
+                cabinSections: [
+                    { id: 'A', label: 'Sección A (Filas 1–3)', pax: 12, arm: 332.0 },
+                    { id: 'B', label: 'Sección B (Filas 4–12)', pax: 47, arm: 546.5 },
+                    { id: 'C', label: 'Sección C (Filas 13–23)', pax: 72, arm: 839.2 }
+                ],
+                cargoComps: [
+                    { id: 1, name: 'Comp. 1 (Delantero)', sta: 'STA 300 a 415', weightLb: 0, arm: 346.1, maxLb: 2537 },
+                    { id: 2, name: 'Comp. 2 (Delantero)', sta: 'STA 415 a 500', weightLb: 0, arm: 457.4, maxLb: 2465 },
+                    { id: 3, name: 'Comp. 3 (Trasero)', sta: 'STA 731 a 892', weightLb: 0, arm: 811.5, maxLb: 5152 },
+                    { id: 4, name: 'Comp. 4 (Trasero)', sta: 'STA 892 a 1048', weightLb: 0, arm: 968.5, maxLb: 2496 }
+                ]
+            };
+
+            renderAllDynamicSections();
+            recalculateAll();
+            showToast('Datos base YV645T (737-3H4) cargados.', 'success');
+        }
+
+        function resetCabinSections() {
+            state.cabinSections = [
+                { id: 'A', label: 'Sección A (Filas 1–3)', pax: 12, arm: 332.0 },
+                { id: 'B', label: 'Sección B (Filas 4–12)', pax: 47, arm: 546.5 },
+                { id: 'C', label: 'Sección C (Filas 13–23)', pax: 72, arm: 839.2 }
+            ];
+            renderCabinSections();
+            recalculateAll();
+        }
+
+        // Selección y renderizado de los 6 Ajustes Oficiales de Tripulación (2/0, 3/0, 2/4, 3/4, 2/3, 3/3)
+        function selectCrewPreset(presetId) {
+            state.crewPresetId = presetId;
+            renderCrewPresets();
+            recalculateAll();
+            if (presetId === 'manual') {
+                showToast('Modo manual de tripulación activado.', 'info');
+            } else {
+                const found = CREW_PRESETS.find(p => p.id === presetId);
+                if (found) {
+                    showToast(`Configuración ${found.code} aplicada (${fmt(lbToDisplay(found.subTotalLb), 0)} ${currentUnit} | I.U. ${found.iuExact >= 0 ? '+' : ''}${found.iuExact.toFixed(2)}).`, 'success');
+                }
+            }
+        }
+
+        function renderCrewPresets() {
+            const grid = document.getElementById('crewPresetsGrid');
+            const btnManual = document.getElementById('btnDowModeManual');
+            const manualPanel = document.getElementById('dowManualPanel');
+            if (!grid) return;
+
+            const isManual = state.crewPresetId === 'manual';
+            if (btnManual) {
+                btnManual.className = isManual
+                    ? 'px-3 py-1.5 rounded-lg text-xs font-extrabold bg-sky-600 text-white border border-sky-400 transition'
+                    : 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition';
+            }
+            if (manualPanel) {
+                if (isManual) manualPanel.classList.remove('opacity-55');
+                else manualPanel.classList.add('opacity-55');
+            }
+
+            grid.innerHTML = '';
+            CREW_PRESETS.forEach(p => {
+                const active = state.crewPresetId === p.id;
+                const subDisp = lbToDisplay(p.subTotalLb);
+                const oewDisp = lbToDisplay(p.oewRefLb);
+                const sign = p.iuExact >= 0 ? '+' : '';
+
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.onclick = () => selectCrewPreset(p.id);
+                card.className = `text-left p-3 rounded-xl border transition flex flex-col justify-between gap-2 ${
+                    active
+                        ? 'bg-emerald-950/45 border-emerald-400 ring-1 ring-emerald-400/50'
+                        : 'bg-slate-900/90 border-slate-700/80 hover:border-sky-500/60'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-extrabold ${active ? 'text-emerald-300' : 'text-white'}">${p.code}</span>
+                        <span class="text-[10px] font-mono-num px-2 py-0.5 rounded font-bold ${
+                            active ? 'bg-emerald-500/25 text-emerald-200 border border-emerald-400/40' : 'bg-slate-800 text-sky-300'
+                        }">
+                            DOI ${p.doiRef.toFixed(1)}
+                        </span>
+                    </div>
+                    <div class="text-[11px] text-slate-400">${p.desc}</div>
+                    <div class="grid grid-cols-3 gap-1.5 pt-1.5 border-t border-slate-800 text-[10px] font-mono-num">
+                        <div>
+                            <span class="text-slate-400 block font-sans">Sub-Total</span>
+                            <strong class="text-white">${fmt(subDisp, currentUnit === 'lb' ? 0 : 1)} ${currentUnit}</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block font-sans">I.U. c.a.</span>
+                            <strong class="text-sky-300">${sign}${p.iuExact.toFixed(2)} (${p.iuRound})</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block font-sans">OEW / %MAC</span>
+                            <strong class="text-amber-300">${fmt(oewDisp, 0)} / ${p.macRef.toFixed(2)}%</strong>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Renderizado de secciones dinámicas
+        function renderAllDynamicSections() {
+            renderScalesTable();
+            renderColItems('col1');
+            renderColItems('col2');
+            renderCrewPresets();
+            renderDowTable();
+            renderCabinSections();
+            renderCargoTable();
+        }
+
+        function renderScalesTable() {
+            const tbody = document.getElementById('weighingScaleBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            state.scales.forEach((sc, idx) => {
+                const netLb = (Number(sc.r1) + Number(sc.r2) + Number(sc.r3)) / 3;
+                const mom = netLb * Number(sc.arm);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2 px-3 font-sans font-semibold text-slate-200">${sc.name}</td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="1" value="${sc.r1}" oninput="updateScale(${idx}, 'r1', this.value)" class="w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="1" value="${sc.r2}" oninput="updateScale(${idx}, 'r2', this.value)" class="w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="1" value="${sc.r3}" oninput="updateScale(${idx}, 'r3', this.value)" class="w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-2 px-2 text-right font-bold text-sky-300" id="scaleNet_${idx}">${fmt(netLb, 2)}</td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="0.01" value="${sc.arm}" oninput="updateScale(${idx}, 'arm', this.value)" class="w-20 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-right text-amber-300 focus:border-amber-400 focus:outline-none"></td>
+                    <td class="py-2 px-3 text-right text-emerald-300" id="scaleMom_${idx}">${fmt(mom, 0)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateScale(idx, field, val) {
+            if (!state.scales[idx]) return;
+            state.scales[idx][field] = Number(val) || 0;
+            recalculateAll();
+        }
+
+        function renderColItems(colKey) {
+            const arr = colKey === 'col1' ? state.col1Items : state.col2Items;
+            const tbody = document.getElementById(colKey === 'col1' ? 'col1ItemsBody' : 'col2ItemsBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            arr.forEach((item, idx) => {
+                const mom = Number(item.weightLb) * Number(item.arm);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-1 px-1"><input type="text" value="${item.desc}" oninput="updateColItem('${colKey}', ${idx}, 'desc', this.value)" class="w-full min-w-[110px] bg-slate-900 border border-slate-700/80 rounded px-1.5 py-1 font-sans text-slate-200 focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1 px-1 text-right"><input type="number" step="0.1" value="${item.weightLb}" oninput="updateColItem('${colKey}', ${idx}, 'weightLb', this.value)" class="w-20 bg-slate-900 border border-slate-700/80 rounded px-1.5 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1 px-1 text-right"><input type="number" step="0.1" value="${item.arm}" oninput="updateColItem('${colKey}', ${idx}, 'arm', this.value)" class="w-16 bg-slate-900 border border-slate-700/80 rounded px-1.5 py-1 text-right text-amber-300 focus:border-amber-400 focus:outline-none"></td>
+                    <td class="py-1 px-1 text-right text-slate-300" id="${colKey}Mom_${idx}">${fmt(mom, 0)}</td>
+                    <td class="py-1 px-1 text-center"><button type="button" onclick="removeColItem('${colKey}', ${idx})" class="text-rose-400 hover:text-rose-300 px-1" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateColItem(colKey, idx, field, val) {
+            const arr = colKey === 'col1' ? state.col1Items : state.col2Items;
+            if (!arr[idx]) return;
+            if (field === 'desc') arr[idx].desc = val;
+            else arr[idx][field] = Number(val) || 0;
+            recalculateAll();
+        }
+
+        function addWeighingItem(colKey) {
+            const arr = colKey === 'col1' ? state.col1Items : state.col2Items;
+            arr.push({ desc: 'Nuevo Ítem', weightLb: 0, arm: 648.5 });
+            renderColItems(colKey);
+            recalculateAll();
+        }
+
+        function removeColItem(colKey, idx) {
+            const arr = colKey === 'col1' ? state.col1Items : state.col2Items;
+            arr.splice(idx, 1);
+            renderColItems(colKey);
+            recalculateAll();
+        }
+
+        function renderDowTable() {
+            const tbody = document.getElementById('dowItemsBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const refArm = Number(document.getElementById('geoRefArm')?.value) || 648.5;
+            const kConst = Number(document.getElementById('geoIdxConst')?.value) || 65000;
+
+            state.dowItems.forEach((item, idx) => {
+                const totW = item.active ? (Number(item.qty) * Number(item.unitLb)) : 0;
+                const mom = totW * Number(item.arm);
+                const ui = kConst !== 0 ? (totW * (Number(item.arm) - refArm)) / kConst : 0;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-1.5 px-2 text-center"><input type="checkbox" ${item.active ? 'checked' : ''} onchange="updateDowItem(${idx}, 'active', this.checked)" class="accent-emerald-500 w-4 h-4 rounded"></td>
+                    <td class="py-1.5 px-2"><input type="text" value="${item.name}" oninput="updateDowItem(${idx}, 'name', this.value)" class="w-full min-w-[140px] bg-slate-900 border border-slate-700 rounded px-2 py-1 font-sans text-slate-200 focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" min="0" step="1" value="${item.qty}" oninput="updateDowItem(${idx}, 'qty', this.value)" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="0.5" value="${item.unitLb}" oninput="updateDowItem(${idx}, 'unitLb', this.value)" class="w-20 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-2 text-right font-bold text-white" id="dowRowW_${idx}">${fmt(totW, 2)}</td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="0.5" value="${item.arm}" oninput="updateDowItem(${idx}, 'arm', this.value)" class="w-20 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-right text-amber-300 focus:border-amber-400 focus:outline-none"></td>
+                    <td class="py-1.5 px-2 text-right text-slate-300" id="dowRowMom_${idx}">${fmt(mom, 0)}</td>
+                    <td class="py-1.5 px-2 text-right font-bold text-sky-300" id="dowRowUi_${idx}">${ui.toFixed(2)}</td>
+                    <td class="py-1.5 px-1 text-center"><button type="button" onclick="removeDowItem(${idx})" class="text-rose-400 hover:text-rose-300 px-1"><i class="fa-solid fa-trash-can"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateDowItem(idx, field, val) {
+            if (!state.dowItems[idx]) return;
+            if (field === 'active') state.dowItems[idx].active = Boolean(val);
+            else if (field === 'name') state.dowItems[idx].name = val;
+            else state.dowItems[idx][field] = Number(val) || 0;
+            recalculateAll();
+        }
+
+        function addDowItem() {
+            state.dowItems.push({ active: true, name: 'Ítem Operativo / Catering', qty: 1, unitLb: 0, arm: 648.5 });
+            renderDowTable();
+            recalculateAll();
+        }
+
+        function removeDowItem(idx) {
+            state.dowItems.splice(idx, 1);
+            renderDowTable();
+            recalculateAll();
+        }
+
+        // Renderizado de las 3 secciones manuales de cabina (A, B, C) con fórmula explícita de U.I.
+        function renderCabinSections() {
+            const grid = document.getElementById('cabinSectionsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const paxW = Number(document.getElementById('paxAvgWeight')?.value) || 165;
+            const refArm = Number(document.getElementById('geoRefArm')?.value) || 648.5;
+            const kConst = Number(document.getElementById('geoIdxConst')?.value) || 65000;
+
+            state.cabinSections.forEach((sec, idx) => {
+                const secW = Number(sec.pax) * paxW;
+                const secMom = secW * Number(sec.arm);
+                const uiVal = kConst !== 0 ? (secW * (Number(sec.arm) - refArm)) / kConst : 0;
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/90 border border-slate-700/90 rounded-xl p-3.5 space-y-3';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-extrabold text-amber-300">${sec.label}</span>
+                        <span class="text-[11px] font-mono-num px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 font-bold" id="secBadgeUi_${idx}">
+                            U.I.: ${uiVal.toFixed(2)}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 text-xs font-mono-num">
+                        <div>
+                            <label class="block text-[10px] font-sans text-slate-400 mb-1">Pasajeros (PAX)</label>
+                            <input type="number" min="0" step="1" value="${sec.pax}" oninput="updateCabinSection(${idx}, 'pax', this.value)" class="w-full bg-[#0b1120] border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-1.5 text-white font-bold text-right focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-sans text-amber-300 mb-1">Brazo Manual (in)</label>
+                            <input type="number" step="0.5" value="${sec.arm}" oninput="updateCabinSection(${idx}, 'arm', this.value)" class="w-full bg-[#0b1120] border border-slate-700 focus:border-sky-400 rounded-lg px-2.5 py-1.5 text-amber-200 font-bold text-right focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] font-mono-num text-slate-300 pt-1">
+                        <span>Peso: <strong id="secW_${idx}" class="text-white">${fmt(secW, 1)}</strong> ${currentUnit}</span>
+                        <span>Mom: <strong id="secMom_${idx}" class="text-slate-200">${fmt(secMom, 0)}</strong></span>
+                    </div>
+
+                    <!-- Celda con Fórmula Explícita y Resultado de Unidades de Índice (U.I.) -->
+                    <div class="bg-[#0b1120] border border-sky-500/35 rounded-lg p-2.5 text-[10px] font-mono-num space-y-1">
+                        <div class="text-slate-400 font-sans uppercase tracking-wider font-bold">Fórmula U.I. Sección ${sec.id}</div>
+                        <div class="text-sky-300 break-words" id="secFormulaText_${idx}">
+                            [${fmt(secW, 1)} &times; (${Number(sec.arm).toFixed(1)} &minus; ${refArm.toFixed(1)})] / ${kConst} = <strong>${uiVal.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateCabinSection(idx, field, val) {
+            if (!state.cabinSections[idx]) return;
+            if (field === 'pax') state.cabinSections[idx].pax = Math.max(0, Math.floor(Number(val) || 0));
+            else state.cabinSections[idx].arm = Number(val) || 0;
+            recalculateAll();
+        }
+
+        // Renderizado de compartimientos de carga 1–4
+        function renderCargoTable() {
+            const tbody = document.getElementById('cargoCompBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const refArm = Number(document.getElementById('geoRefArm')?.value) || 648.5;
+            const kConst = Number(document.getElementById('geoIdxConst')?.value) || 65000;
+
+            state.cargoComps.forEach((comp, idx) => {
+                const w = Number(comp.weightLb) || 0;
+                const arm = Number(comp.arm) || 0;
+                const maxW = Number(comp.maxLb) || 0;
+                const mom = w * arm;
+                const ui = kConst !== 0 ? (w * (arm - refArm)) / kConst : 0;
+                const over = w > maxW;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-1.5 px-2 font-sans font-semibold text-slate-200">${comp.name}</td>
+                    <td class="py-1.5 px-2 font-sans text-[11px] text-slate-400">${comp.sta}</td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" min="0" step="5" value="${comp.weightLb}" oninput="updateCargoComp(${idx}, 'weightLb', this.value)" class="w-20 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-right text-white focus:border-sky-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" step="0.1" value="${comp.arm}" oninput="updateCargoComp(${idx}, 'arm', this.value)" class="w-20 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-right text-amber-300 focus:border-amber-400 focus:outline-none"></td>
+                    <td class="py-1.5 px-1.5 text-right"><input type="number" min="0" step="1" value="${comp.maxLb}" oninput="updateCargoComp(${idx}, 'maxLb', this.value)" class="w-20 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-right text-slate-300 focus:border-slate-500 focus:outline-none"></td>
+                    <td class="py-1.5 px-2 text-right text-slate-300" id="cargoMom_${idx}">${fmt(mom, 0)}</td>
+                    <td class="py-1.5 px-2 text-right font-bold text-sky-300" id="cargoUi_${idx}">${ui.toFixed(2)}</td>
+                    <td class="py-1.5 px-2 text-center" id="cargoStatus_${idx}">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${over ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'}">
+                            ${over ? 'EXCEDE' : 'OK'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateCargoComp(idx, field, val) {
+            if (!state.cargoComps[idx]) return;
+            state.cargoComps[idx][field] = Number(val) || 0;
+            recalculateAll();
+        }
+
+        // Cálculo integral en tiempo real
+        function recalculateAll() {
+            const mac = Math.max(1, Number(document.getElementById('geoMac')?.value) || 134.5);
+            const lemac = Number(document.getElementById('geoLemac')?.value) || 625.6;
+            const refArm = Number(document.getElementById('geoRefArm')?.value) || 648.5;
+            const kConst = Number(document.getElementById('geoIdxConst')?.value) || 65000;
+            const idxBase = Number(document.getElementById('geoIdxBase')?.value) ?? 40;
+
+            const limMrw = Number(document.getElementById('limMrw')?.value) || 140000;
+            const limMtow = Number(document.getElementById('limMtow')?.value) || 139500;
+            const limMzfw = Number(document.getElementById('limMzfw')?.value) || 107500;
+            const limMlw = Number(document.getElementById('limMlw')?.value) || 115000;
+
+            const fwdCg = Number(document.getElementById('limFwdCg')?.value) || 631.0;
+            const aftCg = Number(document.getElementById('limAftCg')?.value) || 667.3;
+            const minMac = Number(document.getElementById('limMinMac')?.value) || 5.0;
+            const maxMac = Number(document.getElementById('limMaxMac')?.value) || 33.0;
+
+            setText('lblSummaryMac', mac.toFixed(1));
+            setText('lblSummaryLemac', lemac.toFixed(1));
+
+            const calcMac = (arm) => ((arm - lemac) / mac) * 100;
+            const calcIdx = (wDisp, arm) => {
+                if (kConst === 0) return 0;
+                const wLb = displayToLb(wDisp);
+                return (wLb * (arm - refArm)) / kConst;
+            };
+
+            // 1. Pesaje en Balanzas
+            let r1Sum = 0, r2Sum = 0, r3Sum = 0, scaleNetW = 0, scaleMom = 0;
+            state.scales.forEach((sc, idx) => {
+                const r1 = Number(sc.r1) || 0;
+                const r2 = Number(sc.r2) || 0;
+                const r3 = Number(sc.r3) || 0;
+                const arm = Number(sc.arm) || 0;
+                const net = (r1 + r2 + r3) / 3;
+                const mom = net * arm;
+
+                r1Sum += r1;
+                r2Sum += r2;
+                r3Sum += r3;
+                scaleNetW += net;
+                scaleMom += mom;
+
+                setText(`scaleNet_${idx}`, fmt(net, 2));
+                setText(`scaleMom_${idx}`, fmt(mom, 0));
+            });
+
+            const scaleArm = scaleNetW !== 0 ? (scaleMom / scaleNetW) : 0;
+            setText('scaleSumR1', fmt(r1Sum, 2));
+            setText('scaleSumR2', fmt(r2Sum, 2));
+            setText('scaleSumR3', fmt(r3Sum, 2));
+            setText('scaleTotalNet', fmt(scaleNetW, 2));
+            setText('scaleTotalArm', fmt(scaleArm, 2));
+            setText('scaleTotalMom', fmt(scaleMom, 0));
+
+            // 2. Columnas I (-) y II (+)
+            let col1W = 0, col1Mom = 0;
+            state.col1Items.forEach((it, idx) => {
+                const w = Number(it.weightLb) || 0;
+                const arm = Number(it.arm) || 0;
+                const mom = w * arm;
+                col1W += w;
+                col1Mom += mom;
+                setText(`col1Mom_${idx}`, fmt(mom, 0));
+            });
+
+            let col2W = 0, col2Mom = 0;
+            state.col2Items.forEach((it, idx) => {
+                const w = Number(it.weightLb) || 0;
+                const arm = Number(it.arm) || 0;
+                const mom = w * arm;
+                col2W += w;
+                col2Mom += mom;
+                setText(`col2Mom_${idx}`, fmt(mom, 0));
+            });
+
+            setText('col1TotalSummary', `${fmt(col1W, 2)} ${currentUnit} | Mom: ${fmt(col1Mom, 0)}`);
+            setText('col2TotalSummary', `${fmt(col2W, 2)} ${currentUnit} | Mom: ${fmt(col2Mom, 0)}`);
+
+            // 3. BEW e I.B.O.
+            const bewW = scaleNetW - col1W + col2W;
+            const bewMom = scaleMom - col1Mom + col2Mom;
+            const bewArm = bewW !== 0 ? (bewMom / bewW) : 0;
+            const bewMac = calcMac(bewArm);
+            const ibo = calcIdx(bewW, bewArm) + idxBase;
+
+            // 4. Tripulación / DOW (Manual Fila por Fila o Ajuste Oficial 2/0, 3/0, 2/4, 3/4, 2/3, 3/3)
+            let manualDowW = 0, manualDowMom = 0, manualDowUi = 0;
+            state.dowItems.forEach((it, idx) => {
+                const rowW = it.active ? ((Number(it.qty) || 0) * (Number(it.unitLb) || 0)) : 0;
+                const arm = Number(it.arm) || 0;
+                const rowMom = rowW * arm;
+                const rowUi = calcIdx(rowW, arm);
+
+                manualDowW += rowW;
+                manualDowMom += rowMom;
+                manualDowUi += rowUi;
+
+                setText(`dowRowW_${idx}`, fmt(rowW, 2));
+                setText(`dowRowMom_${idx}`, fmt(rowMom, 0));
+                setText(`dowRowUi_${idx}`, rowUi.toFixed(2));
+            });
+
+            setText('dowItemsTotalW', fmt(manualDowW, 2));
+            setText('dowItemsTotalMom', fmt(manualDowMom, 0));
+            setText('dowItemsTotalUi', manualDowUi.toFixed(2));
+
+            let dowAddW = manualDowW;
+            let dowAddMom = manualDowMom;
+            let dowAddUi = manualDowUi;
+            let dowW = bewW + dowAddW;
+            let dowMom = bewMom + dowAddMom;
+            let dowArm = dowW !== 0 ? (dowMom / dowW) : 0;
+            let dowMac = calcMac(dowArm);
+            let doi = ibo + dowAddUi;
+
+            const activePreset = state.crewPresetId !== 'manual'
+                ? CREW_PRESETS.find(p => p.id === state.crewPresetId)
+                : null;
+
+            if (activePreset) {
+                dowAddW = lbToDisplay(activePreset.subTotalLb);
+                dowAddUi = activePreset.iuExact;
+                dowW = bewW + dowAddW;
+                // Brazo equivalente del ajuste a partir del I.U. respecto al c.a.
+                const presetArm = activePreset.subTotalLb !== 0
+                    ? refArm + ((activePreset.iuExact * kConst) / activePreset.subTotalLb)
+                    : refArm;
+                dowAddMom = dowAddW * presetArm;
+                dowMom = bewMom + dowAddMom;
+                dowArm = dowW !== 0 ? (dowMom / dowW) : 0;
+                dowMac = calcMac(dowArm);
+                doi = ibo + dowAddUi;
+            }
+
+            // 5. Cabina de Pasajeros (Secciones Manuales A, B, C)
+            const paxW = Number(document.getElementById('paxAvgWeight')?.value) || 165;
+            let totalPax = 0, cabinW = 0, cabinMom = 0, cabinUi = 0;
+
+            state.cabinSections.forEach((sec, idx) => {
+                const p = Math.max(0, Number(sec.pax) || 0);
+                const arm = Number(sec.arm) || 0;
+                const secW = p * paxW;
+                const secMom = secW * arm;
+                const uiVal = calcIdx(secW, arm);
+
+                totalPax += p;
+                cabinW += secW;
+                cabinMom += secMom;
+                cabinUi += uiVal;
+
+                setText(`secBadgeUi_${idx}`, `U.I.: ${uiVal.toFixed(2)}`);
+                setText(`secW_${idx}`, fmt(secW, 1));
+                setText(`secMom_${idx}`, fmt(secMom, 0));
+
+                const fEl = document.getElementById(`secFormulaText_${idx}`);
+                if (fEl) {
+                    const secWInLb = displayToLb(secW);
+                    fEl.innerHTML = `[${fmt(secWInLb, 1)} lb &times; (${arm.toFixed(1)} &minus; ${refArm.toFixed(1)})] / ${kConst} = <strong>${uiVal.toFixed(2)}</strong>`;
+                }
+            });
+
+            setText('cabinTotalPax', String(totalPax));
+            setText('cabinTotalWeight', fmt(cabinW, 1));
+            setText('cabinTotalMom', fmt(cabinMom, 0));
+            setText('cabinTotalUi', cabinUi.toFixed(2));
+
+            // 6. Bodegas 1–4 y Límites Combinados
+            let cargoW = 0, cargoMom = 0, cargoUi = 0;
+            let fwdCombW = 0, aftCombW = 0;
+
+            state.cargoComps.forEach((comp, idx) => {
+                const w = Math.max(0, Number(comp.weightLb) || 0);
+                const arm = Number(comp.arm) || 0;
+                const maxW = Math.max(0, Number(comp.maxLb) || 0);
+                const mom = w * arm;
+                const ui = calcIdx(w, arm);
+
+                cargoW += w;
+                cargoMom += mom;
+                cargoUi += ui;
+
+                if (comp.id <= 2) fwdCombW += w;
+                else aftCombW += w;
+
+                setText(`cargoMom_${idx}`, fmt(mom, 0));
+                setText(`cargoUi_${idx}`, ui.toFixed(2));
+
+                const stEl = document.getElementById(`cargoStatus_${idx}`);
+                if (stEl) {
+                    const over = w > maxW;
+                    stEl.innerHTML = `<span class="px-2 py-0.5 rounded text-[10px] font-bold ${over ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'}">${over ? 'EXCEDE' : 'OK'}</span>`;
+                }
+            });
+
+            const limCombFwd = Number(document.getElementById('limCombFwd')?.value) || 5002;
+            const limCombAft = Number(document.getElementById('limCombAft')?.value) || 7648;
+
+            const fwdOk = fwdCombW <= limCombFwd;
+            const aftOk = aftCombW <= limCombAft;
+            setText('cargoFwdCombText', `${fmt(fwdCombW, 1)} / ${fmt(limCombFwd, 0)} ${currentUnit}`);
+            setText('cargoAftCombText', `${fmt(aftCombW, 1)} / ${fmt(limCombAft, 0)} ${currentUnit}`);
+
+            const fwdBox = document.getElementById('cargoFwdCombBox');
+            const aftBox = document.getElementById('cargoAftCombBox');
+            if (fwdBox) {
+                fwdBox.className = `p-2.5 rounded-xl border flex items-center justify-between ${fwdOk ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-200' : 'border-rose-500/60 bg-rose-950/35 text-rose-200'}`;
+            }
+            if (aftBox) {
+                aftBox.className = `p-2.5 rounded-xl border flex items-center justify-between ${aftOk ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-200' : 'border-rose-500/60 bg-rose-950/35 text-rose-200'}`;
+            }
+
+            // 7. ZFW, TOW y LAW
+            const zfwW = dowW + cabinW + cargoW;
+            const zfwMom = dowMom + cabinMom + cargoMom;
+            const zfwArm = zfwW !== 0 ? (zfwMom / zfwW) : 0;
+            const zfwMac = calcMac(zfwArm);
+            const zfi = doi + cabinUi + cargoUi;
+
+            const fuelToW = Number(document.getElementById('fuelTakeoffW')?.value) || 0;
+            const fuelToArm = Number(document.getElementById('fuelTakeoffArm')?.value) || 628.4;
+            const fuelToMom = fuelToW * fuelToArm;
+            const fuelToUi = calcIdx(fuelToW, fuelToArm);
+
+            const towW = zfwW + fuelToW;
+            const towMom = zfwMom + fuelToMom;
+            const towArm = towW !== 0 ? (towMom / towW) : 0;
+            const towMac = calcMac(towArm);
+            const toi = zfi + fuelToUi;
+
+            const burnW = Number(document.getElementById('fuelBurnW')?.value) || 0;
+            const burnArm = Number(document.getElementById('fuelBurnArm')?.value) || 628.4;
+            const burnMom = burnW * burnArm;
+            const burnUi = calcIdx(burnW, burnArm);
+
+            const lawW = towW - burnW;
+            const lawMom = towMom - burnMom;
+            const lawArm = lawW !== 0 ? (lawMom / lawW) : 0;
+            const lawMac = calcMac(lawArm);
+            const loi = toi - burnUi;
+
+            // Actualizar Tabla de Resumen Operacional
+            setText('tblBewW', fmt(bewW, 2));
+            setText('tblBewArm', fmt(bewArm, 2));
+            setText('tblBewMom', fmt(bewMom, 0));
+            setText('tblBewMac', `${bewMac.toFixed(2)}%`);
+            setText('tblBewIbo', ibo.toFixed(2));
+
+            setText('tblDowW', fmt(dowW, 2));
+            setText('tblDowArm', fmt(dowArm, 2));
+            setText('tblDowMom', fmt(dowMom, 0));
+            setText('tblDowMac', `${dowMac.toFixed(2)}%`);
+            setText('tblDowDoi', doi.toFixed(2));
+
+            setText('tblZfwW', fmt(zfwW, 2));
+            setText('tblZfwArm', fmt(zfwArm, 2));
+            setText('tblZfwMom', fmt(zfwMom, 0));
+            setText('tblZfwMac', `${zfwMac.toFixed(2)}%`);
+            setText('tblZfwZfi', zfi.toFixed(2));
+
+            setText('tblTowW', fmt(towW, 2));
+            setText('tblTowArm', fmt(towArm, 2));
+            setText('tblTowMom', fmt(towMom, 0));
+            setText('tblTowMac', `${towMac.toFixed(2)}%`);
+            setText('tblTowToi', toi.toFixed(2));
+
+            setText('tblLawW', fmt(lawW, 2));
+            setText('tblLawArm', fmt(lawArm, 2));
+            setText('tblLawMom', fmt(lawMom, 0));
+            setText('tblLawMac', `${lawMac.toFixed(2)}%`);
+            setText('tblLawLoi', loi.toFixed(2));
+
+            // Brazo Consolidado (Momento Total / Peso Total) y comparación con Brazo de Ingeniería
+            const consMom = towMom;
+            const consWeight = towW;
+            const consArm = consWeight !== 0 ? (consMom / consWeight) : 0;
+            const consMac = calcMac(consArm);
+            const diffVsEng = consArm - refArm;
+            const diffZfwVsEng = zfwArm - refArm;
+
+            setText('summaryTotalArmCalc', `${consArm.toFixed(2)} in (${consMac.toFixed(2)}% MAC)`);
+            setText('summaryTotalArmFormula', `${fmt(consMom, 0)} / ${fmt(consWeight, 2)} ${currentUnit} = ${consArm.toFixed(2)} in`);
+            setText('summaryEngArmValue', `${refArm.toFixed(2)} in`);
+
+            const engDiffEl = document.getElementById('summaryEngArmDiff');
+            if (engDiffEl) {
+                const sign = diffVsEng >= 0 ? '+' : '';
+                engDiffEl.textContent = `Dif.: ${sign}${diffVsEng.toFixed(2)} in`;
+                engDiffEl.className = `text-[10px] font-bold mt-0.5 ${Math.abs(diffVsEng) <= 25 ? 'text-[#22c55e]' : 'text-amber-300'}`;
+            }
+
+            setText('summaryZfwArmFormula', `${zfwArm.toFixed(2)} in (${zfwMac.toFixed(2)}% MAC)`);
+            const zfwDiffEl = document.getElementById('summaryZfwEngDiff');
+            if (zfwDiffEl) {
+                const zSign = diffZfwVsEng >= 0 ? '+' : '';
+                zfwDiffEl.textContent = `vs Ing.: ${zSign}${diffZfwVsEng.toFixed(2)} in`;
+            }
+
+            // Validación de límites estructurales y CG/MAC
+            const allOk = (
+                towW <= limMrw &&
+                towW <= limMtow &&
+                zfwW <= limMzfw &&
+                lawW <= limMlw &&
+                fwdOk && aftOk &&
+                zfwArm >= fwdCg && zfwArm <= aftCg &&
+                towArm >= fwdCg && towArm <= aftCg &&
+                lawArm >= fwdCg && lawArm <= aftCg &&
+                zfwMac >= minMac && zfwMac <= maxMac &&
+                towMac >= minMac && towMac <= maxMac &&
+                lawMac >= minMac && lawMac <= maxMac
+            );
+
+            const banner = document.getElementById('summaryConsolidatedBanner');
+            const dot = document.getElementById('summaryLimitDot');
+            const title = document.getElementById('summaryLimitTitle');
+            const detail = document.getElementById('summaryLimitDetail');
+
+            if (banner && dot && title && detail) {
+                if (allOk) {
+                    banner.className = 'm-3 p-3.5 rounded-xl border border-emerald-500/50 bg-emerald-950/25 space-y-2.5 transition';
+                    dot.className = 'w-3 h-3 rounded-full bg-[#22c55e]';
+                    title.className = 'text-xs font-extrabold uppercase tracking-wider text-[#22c55e]';
+                    title.textContent = 'DENTRO DE LOS LÍMITES';
+                } else {
+                    banner.className = 'm-3 p-3.5 rounded-xl border border-rose-500/70 bg-rose-950/35 space-y-2.5 transition';
+                    dot.className = 'w-3 h-3 rounded-full bg-[#ef4444] animate-pulse';
+                    title.className = 'text-xs font-extrabold uppercase tracking-wider text-[#ef4444]';
+                    title.textContent = 'FUERA DE LOS LÍMITES';
+                }
+                detail.textContent = `CG: ${fwdCg.toFixed(1)}–${aftCg.toFixed(1)} in • %MAC: ${minMac.toFixed(1)}–${maxMac.toFixed(1)}%`;
+            }
+
+            // Actualizar Gráfica SVG
+            updateCgSvgChart([
+                { id: 'ptBew', y: 36, mac: bewMac },
+                { id: 'ptDow', y: 60, mac: dowMac },
+                { id: 'ptZfw', y: 84, mac: zfwMac },
+                { id: 'ptTow', y: 108, mac: towMac },
+                { id: 'ptLaw', y: 132, mac: lawMac }
+            ]);
+
+            lastCalc = {
+                mac, lemac, refArm, kConst,
+                limMrw, limMtow, limMzfw, limMlw,
+                fwdCg, aftCg, minMac, maxMac,
+                scaleNetW, scaleArm, scaleMom,
+                col1W, col1Mom, col2W, col2Mom,
+                bewW, bewArm, bewMom, bewMac, ibo,
+                dowAddW, dowAddMom, dowAddUi, dowW, dowArm, dowMom, dowMac, doi,
+                totalPax, paxW, cabinW, cabinMom, cabinUi,
+                cargoW, cargoMom, cargoUi, fwdCombW, aftCombW, limCombFwd, limCombAft,
+                zfwW, zfwArm, zfwMom, zfwMac, zfi,
+                fuelToW, fuelToArm, fuelToMom, fuelToUi, towW, towArm, towMom, towMac, toi,
+                burnW, burnArm, burnMom, burnUi, lawW, lawArm, lawMom, lawMac, loi,
+                consArm, consMac, allOk
+            };
+        }
+
+        function updateCgSvgChart(points) {
+            // 5% -> x=65, 33% -> x=280 (ancho 215px para 28% de MAC)
+            const mapX = (macVal) => {
+                const clamped = Math.max(-5, Math.min(45, Number(macVal) || 0));
+                return 65 + ((clamped - 5) / 28) * 215;
+            };
+
+            const polyCoords = [];
+            points.forEach(pt => {
+                const x = mapX(pt.mac);
+                const c = document.getElementById(pt.id);
+                if (c) c.setAttribute('cx', x.toFixed(1));
+                polyCoords.push(`${x.toFixed(1)},${pt.y}`);
+            });
+
+            const poly = document.getElementById('svgCgPolyline');
+            if (poly) poly.setAttribute('points', polyCoords.join(' '));
+        }
+
+        // Exportación a Excel (.xlsx) de 3 hojas vinculadas con fórmulas nativas
+        function exportExcel3Sheets() {
+            try {
+                if (typeof XLSX === 'undefined') {
+                    showToast('Librería SheetJS no cargada. Verifica la conexión.', 'error');
+                    return;
+                }
+                recalculateAll();
+                if (!lastCalc) return;
+
+                const reg = (document.getElementById('acRegistration')?.value || 'AERONAVE').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+                const mod = (document.getElementById('acModel')?.value || 'TIPO').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+                const ser = (document.getElementById('acSerial')?.value || 'SN').trim();
+                const dt = (document.getElementById('acDate')?.value || '').trim();
+                const initials = (document.getElementById('dispatcherInitials')?.value || 'JD').trim().toUpperCase();
+                const unit = currentUnit;
+                const lbFactor = unit === 'lb' ? 1 : LB_PER_KG;
+                const idxBase = Number(document.getElementById('geoIdxBase')?.value) ?? 40;
+
+                const wb = XLSX.utils.book_new();
+
+                // HOJA 1: Reporte de Pesaje e Ingeniería (BEW / I.B.O.)
+                const s1 = [
+                    [`REPORTE OFICIAL DE PESAJE E INGENIERÍA (${initials})`, `Matrícula: ${reg}`, `Modelo: ${mod}`, `S/N: ${ser}`, `Fecha: ${dt}`, `Unidad: ${unit}`],
+                    [],
+                    ['MAC (in)', { t: 'n', v: lastCalc.mac }, 'LEMAC (in)', { t: 'n', v: lastCalc.lemac }, 'Brazo Ref. Ing. (in)', { t: 'n', v: lastCalc.refArm }, 'Divisor K', { t: 'n', v: lastCalc.kConst }],
+                    ['CG Fwd (in)', { t: 'n', v: lastCalc.fwdCg }, 'CG Aft (in)', { t: 'n', v: lastCalc.aftCg }, '%MAC Mín', { t: 'n', v: lastCalc.minMac }, '%MAC Máx', { t: 'n', v: lastCalc.maxMac }],
+                    [],
+                    ['Tren / Apoyo', `Lectura 1 (${unit})`, `Lectura 2 (${unit})`, `Lectura 3 (${unit})`, `Peso Neto (${unit})`, 'Brazo (in)', `Momento (${unit}·in)`]
+                ];
+
+                state.scales.forEach((sc, i) => {
+                    const r = 7 + i;
+                    const net = ((Number(sc.r1) || 0) + (Number(sc.r2) || 0) + (Number(sc.r3) || 0)) / 3;
+                    const mom = net * (Number(sc.arm) || 0);
+                    s1.push([
+                        sc.name,
+                        { t: 'n', v: Number(sc.r1) || 0 },
+                        { t: 'n', v: Number(sc.r2) || 0 },
+                        { t: 'n', v: Number(sc.r3) || 0 },
+                        { t: 'n', v: net, f: `AVERAGE(B${r}:D${r})` },
+                        { t: 'n', v: Number(sc.arm) || 0 },
+                        { t: 'n', v: mom, f: `E${r}*F${r}` }
+                    ]);
+                });
+
+                // Fila 10: Total Pesaje Bruto
+                s1.push([
+                    'TOTAL PESAJE BRUTO',
+                    { t: 'n', v: 0, f: 'SUM(B7:B9)' },
+                    { t: 'n', v: 0, f: 'SUM(C7:C9)' },
+                    { t: 'n', v: 0, f: 'SUM(D7:D9)' },
+                    { t: 'n', v: lastCalc.scaleNetW, f: 'SUM(E7:E9)' },
+                    { t: 'n', v: lastCalc.scaleArm, f: 'IF(E10<>0, G10/E10, 0)' },
+                    { t: 'n', v: lastCalc.scaleMom, f: 'SUM(G7:G9)' }
+                ]);
+
+                s1.push([]);
+                s1.push(['COLUMNA I — ÍTEMS AGREGADOS (-)', `Peso (${unit})`, 'Brazo (in)', `Momento (${unit}·in)`]);
+                const c1StartRow = 13;
+                state.col1Items.forEach((it, i) => {
+                    const r = c1StartRow + i;
+                    const w = Number(it.weightLb) || 0;
+                    const mom = w * (Number(it.arm) || 0);
+                    s1.push([
+                        it.desc,
+                        { t: 'n', v: w },
+                        { t: 'n', v: Number(it.arm) || 0 },
+                        { t: 'n', v: mom, f: `B${r}*C${r}` }
+                    ]);
+                });
+                const c1EndRow = c1StartRow + Math.max(0, state.col1Items.length - 1);
+                const c1TotRow = c1EndRow + 1;
+                s1.push([
+                    'TOTAL COLUMNA I (-)',
+                    { t: 'n', v: lastCalc.col1W, f: state.col1Items.length ? `SUM(B${c1StartRow}:B${c1EndRow})` : 0 },
+                    '',
+                    { t: 'n', v: lastCalc.col1Mom, f: state.col1Items.length ? `SUM(D${c1StartRow}:D${c1EndRow})` : 0 }
+                ]);
+
+                s1.push([]);
+                const c2HdrRow = c1TotRow + 2;
+                s1.push(['COLUMNA II — ÍTEMS AUSENTES (+)', `Peso (${unit})`, 'Brazo (in)', `Momento (${unit}·in)`]);
+                const c2StartRow = c2HdrRow + 1;
+                state.col2Items.forEach((it, i) => {
+                    const r = c2StartRow + i;
+                    const w = Number(it.weightLb) || 0;
+                    const mom = w * (Number(it.arm) || 0);
+                    s1.push([
+                        it.desc,
+                        { t: 'n', v: w },
+                        { t: 'n', v: Number(it.arm) || 0 },
+                        { t: 'n', v: mom, f: `B${r}*C${r}` }
+                    ]);
+                });
+                const c2EndRow = c2StartRow + Math.max(0, state.col2Items.length - 1);
+                const c2TotRow = c2EndRow + 1;
+                s1.push([
+                    'TOTAL COLUMNA II (+)',
+                    { t: 'n', v: lastCalc.col2W, f: state.col2Items.length ? `SUM(B${c2StartRow}:B${c2EndRow})` : 0 },
+                    '',
+                    { t: 'n', v: lastCalc.col2Mom, f: state.col2Items.length ? `SUM(D${c2StartRow}:D${c2EndRow})` : 0 }
+                ]);
+
+                const bewRow = c2TotRow + 2;
+                s1.push([]);
+                s1.push([
+                    'PESO BÁSICO VACÍO (BEW)',
+                    { t: 'n', v: lastCalc.bewW, f: `E10-B${c1TotRow}+B${c2TotRow}` },
+                    { t: 'n', v: lastCalc.bewArm, f: `IF(B${bewRow}<>0, D${bewRow}/B${bewRow}, 0)` },
+                    { t: 'n', v: lastCalc.bewMom, f: `G10-D${c1TotRow}+D${c2TotRow}` },
+                    { t: 'n', v: Number(lastCalc.bewMac.toFixed(2)), f: `((C${bewRow}-$D$3)/$B$3)*100` },
+                    'I.B.O.',
+                    { t: 'n', v: Number(lastCalc.ibo.toFixed(2)), f: `(((B${bewRow}*${lbFactor})*(C${bewRow}-$F$3))/$H$3)+${idxBase}` }
+                ]);
+
+                const ws1 = XLSX.utils.aoa_to_sheet(s1);
+                XLSX.utils.book_append_sheet(wb, ws1, '1_Pesaje_BEW');
+
+                // HOJA 2: Tripulación y DOW / DOI
+                const activePreset = state.crewPresetId !== 'manual'
+                    ? CREW_PRESETS.find(p => p.id === state.crewPresetId)
+                    : null;
+
+                const s2 = [
+                    [`CONFIGURACIÓN TRIPULACIÓN Y DOW (${initials})`, `Aeronave: ${reg} (${mod})`, `Unidad: ${unit}`, `Modo: ${activePreset ? activePreset.code : 'MANUAL'}`],
+                    [],
+                    ['Activo', 'Concepto / Posición', 'Cant.', `Peso Unit. (${unit})`, `Peso Total (${unit})`, 'Brazo (in)', `Momento (${unit}·in)`, 'U.I.']
+                ];
+
+                const dStart = 4;
+                state.dowItems.forEach((d, i) => {
+                    const r = dStart + i;
+                    const totW = d.active ? (Number(d.qty) || 0) * (Number(d.unitLb) || 0) : 0;
+                    const mom = totW * (Number(d.arm) || 0);
+                    const ui = (totW * lbFactor * ((Number(d.arm) || 0) - lastCalc.refArm)) / lastCalc.kConst;
+                    s2.push([
+                        d.active ? 'SI' : 'NO',
+                        d.name,
+                        { t: 'n', v: Number(d.qty) || 0 },
+                        { t: 'n', v: Number(d.unitLb) || 0 },
+                        { t: 'n', v: totW, f: `IF(A${r}="SI", C${r}*D${r}, 0)` },
+                        { t: 'n', v: Number(d.arm) || 0 },
+                        { t: 'n', v: mom, f: `E${r}*F${r}` },
+                        { t: 'n', v: Number(ui.toFixed(2)), f: `((E${r}*${lbFactor})*(F${r}-'1_Pesaje_BEW'!$F$3))/'1_Pesaje_BEW'!$H$3` }
+                    ]);
+                });
+
+                const dEnd = dStart + Math.max(0, state.dowItems.length - 1);
+                const dSubRow = dEnd + 1;
+                const presetArm = activePreset && activePreset.subTotalLb !== 0
+                    ? lastCalc.refArm + ((activePreset.iuExact * lastCalc.kConst) / activePreset.subTotalLb)
+                    : lastCalc.refArm;
+
+                s2.push([
+                    '',
+                    activePreset ? `SUBTOTAL ${activePreset.code}` : 'SUBTOTAL ÍTEMS OPERATIVOS DOW',
+                    '',
+                    '',
+                    activePreset
+                        ? { t: 'n', v: lastCalc.dowAddW }
+                        : { t: 'n', v: lastCalc.dowAddW, f: state.dowItems.length ? `SUM(E${dStart}:E${dEnd})` : 0 },
+                    activePreset ? { t: 'n', v: Number(presetArm.toFixed(2)) } : '',
+                    activePreset
+                        ? { t: 'n', v: lastCalc.dowAddMom, f: `E${dSubRow}*F${dSubRow}` }
+                        : { t: 'n', v: lastCalc.dowAddMom, f: state.dowItems.length ? `SUM(G${dStart}:G${dEnd})` : 0 },
+                    activePreset
+                        ? { t: 'n', v: activePreset.iuExact }
+                        : { t: 'n', v: Number(lastCalc.dowAddUi.toFixed(2)), f: state.dowItems.length ? `SUM(H${dStart}:H${dEnd})` : 0 }
+                ]);
+
+                const dowTotRow = dSubRow + 2;
+                s2.push([]);
+                s2.push([
+                    '',
+                    'PESO OPERATIVO SECO (DOW / DOI)',
+                    '',
+                    '',
+                    { t: 'n', v: lastCalc.dowW, f: `'1_Pesaje_BEW'!B${bewRow}+E${dSubRow}` },
+                    { t: 'n', v: lastCalc.dowArm, f: `IF(E${dowTotRow}<>0, G${dowTotRow}/E${dowTotRow}, 0)` },
+                    { t: 'n', v: lastCalc.dowMom, f: `'1_Pesaje_BEW'!D${bewRow}+G${dSubRow}` },
+                    { t: 'n', v: Number(lastCalc.doi.toFixed(2)), f: `'1_Pesaje_BEW'!G${bewRow}+H${dSubRow}` }
+                ]);
+
+                const ws2 = XLSX.utils.aoa_to_sheet(s2);
+                XLSX.utils.book_append_sheet(wb, ws2, '2_Tripulacion_DOW');
+
+                // HOJA 3: Cabina (A, B, C), Bodegas (1–4), Combustible y Resumen Final
+                const s3 = [
+                    [`CABINA, BODEGAS, COMBUSTIBLE Y RESUMEN (${initials})`, `Aeronave: ${reg} (${mod})`, `Unidad: ${unit}`],
+                    [],
+                    ['SECCIÓN CABINA', 'Pasajeros', `Peso/PAX (${unit})`, `Peso Total (${unit})`, 'Brazo (in)', `Momento (${unit}·in)`, 'U.I.']
+                ];
+
+                const secStart = 4;
+                state.cabinSections.forEach((sec, i) => {
+                    const r = secStart + i;
+                    const p = Number(sec.pax) || 0;
+                    const w = p * lastCalc.paxW;
+                    const mom = w * (Number(sec.arm) || 0);
+                    const ui = (w * lbFactor * ((Number(sec.arm) || 0) - lastCalc.refArm)) / lastCalc.kConst;
+                    s3.push([
+                        sec.label,
+                        { t: 'n', v: p },
+                        { t: 'n', v: lastCalc.paxW },
+                        { t: 'n', v: w, f: `B${r}*C${r}` },
+                        { t: 'n', v: Number(sec.arm) || 0 },
+                        { t: 'n', v: mom, f: `D${r}*E${r}` },
+                        { t: 'n', v: Number(ui.toFixed(2)), f: `((D${r}*${lbFactor})*(E${r}-'1_Pesaje_BEW'!$F$3))/'1_Pesaje_BEW'!$H$3` }
+                    ]);
+                });
+
+                const secEnd = secStart + state.cabinSections.length - 1;
+                const secTotRow = secEnd + 1;
+                s3.push([
+                    'TOTAL CABINA PASAJEROS',
+                    { t: 'n', v: lastCalc.totalPax, f: `SUM(B${secStart}:B${secEnd})` },
+                    '',
+                    { t: 'n', v: lastCalc.cabinW, f: `SUM(D${secStart}:D${secEnd})` },
+                    { t: 'n', v: lastCalc.cabinW !== 0 ? lastCalc.cabinMom / lastCalc.cabinW : 0, f: `IF(D${secTotRow}<>0, F${secTotRow}/D${secTotRow}, 0)` },
+                    { t: 'n', v: lastCalc.cabinMom, f: `SUM(F${secStart}:F${secEnd})` },
+                    { t: 'n', v: Number(lastCalc.cabinUi.toFixed(2)), f: `SUM(G${secStart}:G${secEnd})` }
+                ]);
+
+                s3.push([]);
+                const compHdrRow = secTotRow + 2;
+                s3.push(['COMPARTIMIENTO CARGA', 'Ubicación', `Carga (${unit})`, 'Brazo (in)', `Máx. (${unit})`, `Momento (${unit}·in)`, 'U.I.']);
+
+                const compStart = compHdrRow + 1;
+                state.cargoComps.forEach((c, i) => {
+                    const r = compStart + i;
+                    const w = Number(c.weightLb) || 0;
+                    const mom = w * (Number(c.arm) || 0);
+                    const ui = (w * lbFactor * ((Number(c.arm) || 0) - lastCalc.refArm)) / lastCalc.kConst;
+                    s3.push([
+                        c.name,
+                        c.sta,
+                        { t: 'n', v: w },
+                        { t: 'n', v: Number(c.arm) || 0 },
+                        { t: 'n', v: Number(c.maxLb) || 0 },
+                        { t: 'n', v: mom, f: `C${r}*D${r}` },
+                        { t: 'n', v: Number(ui.toFixed(2)), f: `((C${r}*${lbFactor})*(D${r}-'1_Pesaje_BEW'!$F$3))/'1_Pesaje_BEW'!$H$3` }
+                    ]);
+                });
+
+                const compEnd = compStart + state.cargoComps.length - 1;
+                const compTotRow = compEnd + 1;
+                s3.push([
+                    'TOTAL BODEGAS DE CARGA',
+                    '',
+                    { t: 'n', v: lastCalc.cargoW, f: `SUM(C${compStart}:C${compEnd})` },
+                    { t: 'n', v: lastCalc.cargoW !== 0 ? lastCalc.cargoMom / lastCalc.cargoW : 0, f: `IF(C${compTotRow}<>0, F${compTotRow}/C${compTotRow}, 0)` },
+                    '',
+                    { t: 'n', v: lastCalc.cargoMom, f: `SUM(F${compStart}:F${compEnd})` },
+                    { t: 'n', v: Number(lastCalc.cargoUi.toFixed(2)), f: `SUM(G${compStart}:G${compEnd})` }
+                ]);
+
+                s3.push([]);
+                const fuelHdrRow = compTotRow + 2;
+                s3.push(['COMBUSTIBLE', '', `Peso (${unit})`, 'Brazo (in)', '', `Momento (${unit}·in)`, 'U.I.']);
+                const fToRow = fuelHdrRow + 1;
+                const fBurnRow = fuelHdrRow + 2;
+                s3.push([
+                    'Fuel Takeoff',
+                    '',
+                    { t: 'n', v: lastCalc.fuelToW },
+                    { t: 'n', v: lastCalc.fuelToArm },
+                    '',
+                    { t: 'n', v: lastCalc.fuelToMom, f: `C${fToRow}*D${fToRow}` },
+                    { t: 'n', v: Number(lastCalc.fuelToUi.toFixed(2)), f: `((C${fToRow}*${lbFactor})*(D${fToRow}-'1_Pesaje_BEW'!$F$3))/'1_Pesaje_BEW'!$H$3` }
+                ]);
+                s3.push([
+                    'Burn-Off',
+                    '',
+                    { t: 'n', v: lastCalc.burnW },
+                    { t: 'n', v: lastCalc.burnArm },
+                    '',
+                    { t: 'n', v: lastCalc.burnMom, f: `C${fBurnRow}*D${fBurnRow}` },
+                    { t: 'n', v: Number(lastCalc.burnUi.toFixed(2)), f: `((C${fBurnRow}*${lbFactor})*(D${fBurnRow}-'1_Pesaje_BEW'!$F$3))/'1_Pesaje_BEW'!$H$3` }
+                ]);
+
+                s3.push([]);
+                const sumHdrRow = fBurnRow + 2;
+                s3.push(['ETAPA RESUMEN', `Peso (${unit})`, 'Brazo / CG (in)', `Momento (${unit}·in)`, '% MAC', 'Índice', `Límite Máx. (${unit})`]);
+
+                const rBew = sumHdrRow + 1;
+                const rDow = sumHdrRow + 2;
+                const rZfw = sumHdrRow + 3;
+                const rTow = sumHdrRow + 4;
+                const rLaw = sumHdrRow + 5;
+
+                s3.push([
+                    'BEW',
+                    { t: 'n', v: lastCalc.bewW, f: `'1_Pesaje_BEW'!B${bewRow}` },
+                    { t: 'n', v: lastCalc.bewArm, f: `IF(B${rBew}<>0, D${rBew}/B${rBew}, 0)` },
+                    { t: 'n', v: lastCalc.bewMom, f: `'1_Pesaje_BEW'!D${bewRow}` },
+                    { t: 'n', v: Number(lastCalc.bewMac.toFixed(2)), f: `((C${rBew}-'1_Pesaje_BEW'!$D$3)/'1_Pesaje_BEW'!$B$3)*100` },
+                    { t: 'n', v: Number(lastCalc.ibo.toFixed(2)), f: `'1_Pesaje_BEW'!G${bewRow}` },
+                    ''
+                ]);
+                s3.push([
+                    'DOW',
+                    { t: 'n', v: lastCalc.dowW, f: `'2_Tripulacion_DOW'!E${dowTotRow}` },
+                    { t: 'n', v: lastCalc.dowArm, f: `IF(B${rDow}<>0, D${rDow}/B${rDow}, 0)` },
+                    { t: 'n', v: lastCalc.dowMom, f: `'2_Tripulacion_DOW'!G${dowTotRow}` },
+                    { t: 'n', v: Number(lastCalc.dowMac.toFixed(2)), f: `((C${rDow}-'1_Pesaje_BEW'!$D$3)/'1_Pesaje_BEW'!$B$3)*100` },
+                    { t: 'n', v: Number(lastCalc.doi.toFixed(2)), f: `'2_Tripulacion_DOW'!H${dowTotRow}` },
+                    ''
+                ]);
+                s3.push([
+                    'ZFW',
+                    { t: 'n', v: lastCalc.zfwW, f: `B${rDow}+D${secTotRow}+C${compTotRow}` },
+                    { t: 'n', v: lastCalc.zfwArm, f: `IF(B${rZfw}<>0, D${rZfw}/B${rZfw}, 0)` },
+                    { t: 'n', v: lastCalc.zfwMom, f: `D${rDow}+F${secTotRow}+F${compTotRow}` },
+                    { t: 'n', v: Number(lastCalc.zfwMac.toFixed(2)), f: `((C${rZfw}-'1_Pesaje_BEW'!$D$3)/'1_Pesaje_BEW'!$B$3)*100` },
+                    { t: 'n', v: Number(lastCalc.zfi.toFixed(2)), f: `F${rDow}+G${secTotRow}+G${compTotRow}` },
+                    { t: 'n', v: lastCalc.limMzfw }
+                ]);
+                s3.push([
+                    'TOW',
+                    { t: 'n', v: lastCalc.towW, f: `B${rZfw}+C${fToRow}` },
+                    { t: 'n', v: lastCalc.towArm, f: `IF(B${rTow}<>0, D${rTow}/B${rTow}, 0)` },
+                    { t: 'n', v: lastCalc.towMom, f: `D${rZfw}+F${fToRow}` },
+                    { t: 'n', v: Number(lastCalc.towMac.toFixed(2)), f: `((C${rTow}-'1_Pesaje_BEW'!$D$3)/'1_Pesaje_BEW'!$B$3)*100` },
+                    { t: 'n', v: Number(lastCalc.toi.toFixed(2)), f: `F${rZfw}+G${fToRow}` },
+                    { t: 'n', v: lastCalc.limMtow }
+                ]);
+                s3.push([
+                    'LAW',
+                    { t: 'n', v: lastCalc.lawW, f: `B${rTow}-C${fBurnRow}` },
+                    { t: 'n', v: lastCalc.lawArm, f: `IF(B${rLaw}<>0, D${rLaw}/B${rLaw}, 0)` },
+                    { t: 'n', v: lastCalc.lawMom, f: `D${rTow}-F${fBurnRow}` },
+                    { t: 'n', v: Number(lastCalc.lawMac.toFixed(2)), f: `((C${rLaw}-'1_Pesaje_BEW'!$D$3)/'1_Pesaje_BEW'!$B$3)*100` },
+                    { t: 'n', v: Number(lastCalc.loi.toFixed(2)), f: `F${rTow}-G${fBurnRow}` },
+                    { t: 'n', v: lastCalc.limMlw }
+                ]);
+
+                const rComp = rLaw + 2;
+                s3.push([]);
+                s3.push([
+                    'CONSOLIDADO (MOM / PESO)',
+                    { t: 'n', v: lastCalc.towW, f: `B${rTow}` },
+                    { t: 'n', v: lastCalc.consArm, f: `IF(B${rComp}<>0, D${rComp}/B${rComp}, 0)` },
+                    { t: 'n', v: lastCalc.towMom, f: `D${rTow}` },
+                    { t: 'n', v: Number(lastCalc.consMac.toFixed(2)), f: `((C${rComp}-'1_Pesaje_BEW'!$D$3)/'1_Pesaje_BEW'!$B$3)*100` },
+                    { t: 'n', v: Number((lastCalc.consArm - lastCalc.refArm).toFixed(2)), f: `C${rComp}-'1_Pesaje_BEW'!$F$3` },
+                    { t: 's', v: '', f: `IF(AND(B${rZfw}<=G${rZfw}, B${rTow}<=G${rTow}, B${rLaw}<=G${rLaw}, C${rZfw}>='1_Pesaje_BEW'!$B$4, C${rZfw}<='1_Pesaje_BEW'!$D$4), "DENTRO DE LOS LÍMITES", "FUERA DE LOS LÍMITES")` }
+                ]);
+
+                const ws3 = XLSX.utils.aoa_to_sheet(s3);
+                XLSX.utils.book_append_sheet(wb, ws3, '3_Cabina_Bodegas_Resumen');
+
+                const filename = `Peso_Balance_${mod}_${reg}_${initials}_${unit}.xlsx`;
+                XLSX.writeFile(wb, filename);
+                showToast(`Archivo Excel exportado: ${filename}`, 'success');
+            } catch (err) {
+                showToast(`Error al exportar Excel: ${err.message}`, 'error');
+            }
+        }
+
+        // Control de Pantalla Completa con Fullscreen API y fallback para iframes restringidos
+        let isFallbackExpanded = false;
+
+        function syncFullscreenUi() {
+            const isNativeFs = Boolean(document.fullscreenElement);
+            const activeFs = isNativeFs || isFallbackExpanded;
+            document.body.classList.toggle('expanded-viewport', isFallbackExpanded);
+
+            const icon = document.getElementById('iconFullscreen');
+            const label = document.getElementById('lblFullscreen');
+            if (icon) {
+                icon.className = activeFs ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+            }
+            if (label) {
+                label.textContent = activeFs ? 'Salir Completa' : 'Pantalla Completa';
+            }
+        }
+
+        async function toggleFullscreenMode() {
+            try {
+                if (document.fullscreenElement) {
+                    await document.exitFullscreen();
+                    isFallbackExpanded = false;
+                    syncFullscreenUi();
+                    showToast('Pantalla completa desactivada.', 'info');
+                    return;
+                }
+
+                if (isFallbackExpanded) {
+                    isFallbackExpanded = false;
+                    syncFullscreenUi();
+                    showToast('Vista expandida desactivada.', 'info');
+                    return;
+                }
+
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                    syncFullscreenUi();
+                    showToast('Pantalla completa activada (Presiona F o Esc para salir).', 'success');
+                } else {
+                    isFallbackExpanded = true;
+                    syncFullscreenUi();
+                    showToast('Modo de vista expandida activado.', 'info');
+                }
+            } catch (_err) {
+                // Fallback limpio cuando el navegador o un iframe sandbox bloquea requestFullscreen
+                isFallbackExpanded = !isFallbackExpanded;
+                syncFullscreenUi();
+                showToast(
+                    isFallbackExpanded
+                        ? 'Pantalla completa restringida por el contenedor; vista expandida activada.'
+                        : 'Vista expandida desactivada.',
+                    'info'
+                );
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                isFallbackExpanded = false;
+            }
+            syncFullscreenUi();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            const tag = event.target && event.target.tagName ? event.target.tagName.toUpperCase() : '';
+            const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (event.target && event.target.isContentEditable);
+            if (isEditable) return;
+
+            if (event.key === 'f' || event.key === 'F') {
+                event.preventDefault();
+                toggleFullscreenMode();
+            } else if (event.key === 'F11' && isFallbackExpanded && !document.fullscreenElement) {
+                isFallbackExpanded = false;
+                syncFullscreenUi();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            onInitialsChange();
+            renderAllDynamicSections();
+            recalculateAll();
+            syncFullscreenUi();
+        });
+    </script>
+</body>
+</html>
